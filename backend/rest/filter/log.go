@@ -15,7 +15,7 @@ type LogPostFilter struct {
 }
 
 // display user's request information,optional
-func (LogPreFilter) Do(request *model.IrisReq) (bool, interface{}, types.BizCode) {
+func (LogPreFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
 	start := time.Now()
 	request.TraceId = start.UnixNano()
 	request.Start = start
@@ -36,7 +36,7 @@ func (LogPreFilter) Do(request *model.IrisReq) (bool, interface{}, types.BizCode
 }
 
 // display user's request information,optional
-func (LogPostFilter) Do(request *model.IrisReq) (bool, interface{}, types.BizCode) {
+func (LogPostFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
 	traceId := logger.Int64("traceId", request.TraceId)
 	coastSecond := time.Now().Unix() - request.Start.Unix()
 	coast := logger.Int64("coast", coastSecond)

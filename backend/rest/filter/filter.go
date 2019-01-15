@@ -6,63 +6,38 @@ import (
 	"github.com/irisnet/explorer/backend/types"
 )
 
-const GlobalFilterPath = "*"
-
-type Filter interface {
-	Do(request *model.IrisReq) (bool, interface{}, types.BizCode)
-}
-
-type Type int
-
 const (
 	Pre  Type = 0
 	Post Type = 1
+
+	GlobalFilterPath = "*"
 )
 
-type RouteFilter map[string][]Filter
+type Filter interface {
+	Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode)
+}
 
-var preFilters = make(RouteFilter, 0)
-var postFilters = make(RouteFilter, 0)
+type Router map[string][]Filter
+type Type int
+
+var preFilters = make(Router, 0)
+var postFilters = make(Router, 0)
 
 func RegisterFilters(path string, typ Type, fs []Filter) {
-	var filers RouteFilter
-	switch typ {
-	case Pre:
-		filers = preFilters
-		break
-	case Post:
-		filers = postFilters
-	default:
-		logger.Panic("not existed filter type", logger.Any("type", typ))
-
-	}
-	if _, ok := filers[path]; ok {
+	var router = getRouter(typ)
+	if _, ok := router[path]; ok {
 		logger.Panic("duplicate registration filter", logger.String("path", path))
 	}
-	filers[path] = fs
+	router[path] = fs
 }
 
-func DoFilters(req *model.IrisReq, typ Type) (bool, interface{}, types.BizCode) {
-	var filers RouteFilter
-	switch typ {
-	case Pre:
-		filers = preFilters
-		break
-	case Post:
-		filers = postFilters
-	default:
-		logger.Panic("not existed filter type", logger.Any("type", typ))
-
-	}
-	return doFilter(req, filers)
-}
-
-func doFilter(req *model.IrisReq, filters RouteFilter) (bool, interface{}, types.BizCode) {
+func DoFilters(req *model.IrisReq, data interface{}, typ Type) (bool, interface{}, types.BizCode) {
+	var router = getRouter(typ)
 	//check global filters
-	globalFilters, ok := filters[GlobalFilterPath]
+	globalFilters, ok := router[GlobalFilterPath]
 	if ok {
 		for _, f := range globalFilters {
-			ok, data, err := f.Do(req)
+			ok, data, err := f.Do(req, data)
 			if !ok {
 				return false, data, err
 			}
@@ -70,14 +45,29 @@ func doFilter(req *model.IrisReq, filters RouteFilter) (bool, interface{}, types
 	}
 
 	//check custom filters
-	customFilters, ok := filters[req.RequestURI]
+	customFilters, ok := router[req.RequestURI]
 	if ok {
 		for _, f := range customFilters {
-			ok, data, err := f.Do(req)
+			ok, data, err := f.Do(req, data)
 			if !ok {
 				return false, data, err
 			}
 		}
 	}
 	return true, nil, types.CodeSuccess
+}
+
+func getRouter(typ Type) Router {
+	var router Router
+	switch typ {
+	case Pre:
+		router = preFilters
+		break
+	case Post:
+		router = postFilters
+		break
+	default:
+		logger.Panic("not existed filter type", logger.Any("type", typ))
+	}
+	return router
 }

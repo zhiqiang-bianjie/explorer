@@ -20,7 +20,7 @@ type health struct {
 type HealthCheckFilter struct {
 }
 
-func (HealthCheckFilter) Do(request *model.IrisReq) (bool, interface{}, types.BizCode) {
+func (HealthCheckFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
 	//TODO
 	bz, err := utils.Get("http://192.168.150.7:9180/ops_ctl/latest")
 	if err != nil {
