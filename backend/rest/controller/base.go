@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"github.com/irisnet/explorer/backend/cache"
 	"github.com/irisnet/explorer/backend/logger"
 	"github.com/irisnet/explorer/backend/model"
 	"github.com/irisnet/explorer/backend/rest/filter"
@@ -10,6 +11,7 @@ import (
 	"github.com/irisnet/explorer/backend/utils"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // user business action
@@ -57,10 +59,20 @@ func GetPage(r model.IrisReq) (int, int) {
 
 // execute user's business code
 func doAction(request model.IrisReq, action Action) interface{} {
+	requestURI := request.RequestURI
 	//do business action
-	logger.Debug("doAction", logger.Int64("traceId", request.TraceId))
+	logger.Info("doAction", logger.Int64("traceId", request.TraceId))
+
+	cacheValue := cache.Get(requestURI)
+
+	if len(cacheValue) > 0 {
+		logger.Info("load from cache", logger.Int64("traceId", request.TraceId))
+		return cacheValue
+	}
 	result := action(request)
-	logger.Debug("doAction result", logger.Int64("traceId", request.TraceId), logger.Any("result", result))
+	logger.Info("doAction result", logger.Int64("traceId", request.TraceId), logger.Any("result", result))
+	bz, _ := json.Marshal(result)
+	cache.Set(requestURI, bz, 5*time.Second)
 	return result
 }
 
@@ -103,7 +115,6 @@ func doResponse(writer http.ResponseWriter, data interface{}) {
 	default:
 		bz, _ = json.Marshal(data)
 	}
-
 	writer.Write(bz)
 }
 

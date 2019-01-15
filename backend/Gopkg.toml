@@ -42,6 +42,10 @@
   branch = "v2"
   name = "gopkg.in/mgo.v2"
 
+[[constraint]]
+  name = "github.com/go-redis/redis"
+  version = "v6.15.1"
+
 [prune]
   go-tests = true
   unused-packages = true
