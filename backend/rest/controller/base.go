@@ -63,7 +63,7 @@ func doAction(request model.IrisReq, action Action) interface{} {
 	//do business action
 	logger.Info("doAction", logger.Int64("traceId", request.TraceId))
 
-	cacheValue := cache.Get(requestURI)
+	cacheValue, _ := cache.Instance().Get(requestURI)
 
 	if len(cacheValue) > 0 {
 		logger.Info("load from cache", logger.Int64("traceId", request.TraceId))
@@ -72,7 +72,7 @@ func doAction(request model.IrisReq, action Action) interface{} {
 	result := action(request)
 	logger.Info("doAction result", logger.Int64("traceId", request.TraceId), logger.Any("result", result))
 	bz, _ := json.Marshal(result)
-	cache.Set(requestURI, bz, 5*time.Second)
+	cache.Instance().Set(requestURI, bz, 5*time.Second)
 	return result
 }
 
