@@ -15,15 +15,25 @@ const (
 
 type Filter interface {
 	Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode)
+	GetPath() string
+}
+type FChain []Filter
+
+func NewFChain() FChain {
+	return make(FChain, 0)
+}
+func (chain FChain) Append(f Filter) FChain {
+	c := append(chain, f)
+	return c
 }
 
-type Router map[string][]Filter
+type Router map[string]FChain
 type Type int
 
-var preFilters = make(Router, 0)
-var postFilters = make(Router, 0)
+var preRouter = make(Router, 0)
+var postRouter = make(Router, 0)
 
-func RegisterFilters(path string, typ Type, fs []Filter) {
+func Register(path string, typ Type, fs FChain) {
 	var router = getRouter(typ)
 	if _, ok := router[path]; ok {
 		logger.Panic("duplicate registration filter", logger.String("path", path))
@@ -61,10 +71,10 @@ func getRouter(typ Type) Router {
 	var router Router
 	switch typ {
 	case Pre:
-		router = preFilters
+		router = preRouter
 		break
 	case Post:
-		router = postFilters
+		router = postRouter
 		break
 	default:
 		logger.Panic("not existed filter type", logger.Any("type", typ))

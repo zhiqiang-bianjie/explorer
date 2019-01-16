@@ -20,6 +20,10 @@ type health struct {
 type HealthCheckFilter struct {
 }
 
+func (HealthCheckFilter) GetPath() string {
+	return GlobalFilterPath
+}
+
 func (HealthCheckFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
 	//TODO
 	bz, err := utils.Get("http://192.168.150.7:9180/ops_ctl/latest")

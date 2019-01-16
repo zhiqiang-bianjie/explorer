@@ -35,6 +35,10 @@ func (LogPreFilter) Do(request *model.IrisReq, data interface{}) (bool, interfac
 	return true, nil, types.CodeSysmaintenance
 }
 
+func (LogPreFilter) GetPath() string {
+	return GlobalFilterPath
+}
+
 // display user's request information,optional
 func (LogPostFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
 	traceId := logger.Int64("traceId", request.TraceId)
@@ -50,4 +54,8 @@ func (LogPostFilter) Do(request *model.IrisReq, data interface{}) (bool, interfa
 		logger.Warn("LogPostFilter api coast most time", traceId)
 	}
 	return true, nil, types.CodeSysmaintenance
+}
+
+func (LogPostFilter) GetPath() string {
+	return GlobalFilterPath
 }

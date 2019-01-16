@@ -69,6 +69,9 @@ const (
 	Change  = "powerChange"
 	Slash   = "slash"
 	Recover = "recover"
+
+	RedisKeyApiPrefix       = "api"
+	RedisKeyRateLimitPrefix = "rate"
 )
 
 var (

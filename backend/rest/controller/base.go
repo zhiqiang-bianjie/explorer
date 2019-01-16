@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/irisnet/explorer/backend/cache"
 	"github.com/irisnet/explorer/backend/logger"
@@ -59,11 +60,11 @@ func GetPage(r model.IrisReq) (int, int) {
 
 // execute user's business code
 func doAction(request model.IrisReq, action Action) interface{} {
-	requestURI := request.RequestURI
+	key := fmt.Sprintf("%s:%s", types.RedisKeyApiPrefix, request.RequestURI)
 	//do business action
 	logger.Info("doAction", logger.Int64("traceId", request.TraceId))
 
-	cacheValue, _ := cache.Instance().Get(requestURI)
+	cacheValue, _ := cache.Instance().Get(key)
 
 	if len(cacheValue) > 0 {
 		logger.Info("load from cache", logger.Int64("traceId", request.TraceId))
@@ -72,7 +73,7 @@ func doAction(request model.IrisReq, action Action) interface{} {
 	result := action(request)
 	logger.Info("doAction result", logger.Int64("traceId", request.TraceId), logger.Any("result", result))
 	bz, _ := json.Marshal(result)
-	cache.Instance().Set(requestURI, bz, 5*time.Second)
+	cache.Instance().Set(key, bz, 5*time.Second)
 	return result
 }
 
@@ -134,7 +135,7 @@ func doApi(r *mux.Router, url, method string, action Action) {
 			panic(err)
 		}
 		result := doAction(req, action)
-		ok, _, err = filter.DoFilters(&req, result, filter.Post)
+		ok, _, err = filter.DoFilters(&req, &result, filter.Post)
 		if !ok {
 			panic(err)
 		}

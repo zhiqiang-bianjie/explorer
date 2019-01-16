@@ -28,6 +28,22 @@ func (r RedisClient) Get(key string) ([]byte, error) {
 	return val, err
 }
 
+func (r RedisClient) GetInt(key string) (int, error) {
+	val, err := r.Client.Get(key).Int()
+	if err != nil {
+		logger.Warn("get value from redis,return nil", logger.String("key", key))
+	}
+	return val, err
+}
+
+func (r RedisClient) Incr(key string) (int64, error) {
+	val, err := r.Client.Incr(key).Result()
+	if err != nil {
+		logger.Warn("get value from redis,return nil", logger.String("key", key))
+	}
+	return val, err
+}
+
 func init() {
 	cli := redis.NewClient(&redis.Options{
 		Addr:     "127.0.0.1:6379",
@@ -36,7 +52,7 @@ func init() {
 	})
 
 	pong, err := cli.Ping().Result()
-	logger.Info("redis ping", logger.Any("pong", pong), logger.Any("err", err.Error()))
+	logger.Info("redis ping", logger.Any("pong", pong), logger.Any("err", err))
 
 	client = RedisClient{
 		cli,
@@ -46,6 +62,8 @@ func init() {
 type Cache interface {
 	Set(key string, value interface{}, expiration time.Duration) error
 	Get(key string) ([]byte, error)
+	GetInt(key string) (int, error)
+	Incr(key string) (int64, error)
 }
 
 func Instance() Cache {
