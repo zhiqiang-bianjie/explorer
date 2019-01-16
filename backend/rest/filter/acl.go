@@ -8,32 +8,38 @@ import (
 )
 
 //ACL TODO
-const AclStr = "127.0.0.1"
+const AclList = "127.0.0.1"
 
-type AclFilter struct {
+type AclPreFilter struct {
 }
 
-func (AclFilter) GetPath() string {
+func (AclPreFilter) Paths() string {
 	return GlobalFilterPath
 }
 
-func (AclFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
-	if "*" == AclStr {
-		return true, nil, types.CodeSuccess
+func (AclPreFilter) Type() Type {
+	return Pre
+}
+
+func (AclPreFilter) Do(request *model.IrisReq, data interface{}) (interface{}, types.BizCode) {
+	traceId := logger.Int64("traceId", request.TraceId)
+	logger.Info("AclPreFilter", traceId)
+	if "*" == AclList {
+		return nil, types.CodeSuccess
 	}
 
-	aclList := strings.Split(AclStr, ",")
+	aclList := strings.Split(AclList, ",")
 	if len(aclList) == 0 {
-		return true, nil, types.CodeSuccess
+		return nil, types.CodeSuccess
 	}
 
 	remoteIp := strings.Split(request.RemoteAddr, ":")[0]
 	for _, acc := range aclList {
 		if acc == remoteIp {
-			return true, nil, types.CodeSuccess
+			return nil, types.CodeSuccess
 		}
 	}
 
 	logger.Warn("access unauthorized", logger.String("IP", remoteIp))
-	return false, nil, types.CodeUnauthorized
+	return nil, types.CodeUnauthorized
 }

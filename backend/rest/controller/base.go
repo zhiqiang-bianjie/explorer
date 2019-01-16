@@ -130,13 +130,13 @@ func doApi(r *mux.Router, url, method string, action Action) {
 			Request: request,
 		}
 		defer doException(req, writer)
-		ok, _, err := filter.DoFilters(&req, nil, filter.Pre)
-		if !ok {
+		_, err := filter.DoFilters(&req, nil, filter.Pre)
+		if !err.Success() {
 			panic(err)
 		}
 		result := doAction(req, action)
-		ok, _, err = filter.DoFilters(&req, &result, filter.Post)
-		if !ok {
+		_, err = filter.DoFilters(&req, &result, filter.Post)
+		if !err.Success() {
 			panic(err)
 		}
 		doResponse(writer, result)

@@ -20,11 +20,17 @@ type health struct {
 type HealthCheckFilter struct {
 }
 
-func (HealthCheckFilter) GetPath() string {
+func (HealthCheckFilter) Type() Type {
+	return Pre
+}
+
+func (HealthCheckFilter) Paths() string {
 	return GlobalFilterPath
 }
 
-func (HealthCheckFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
+func (HealthCheckFilter) Do(request *model.IrisReq, data interface{}) (interface{}, types.BizCode) {
+	traceId := logger.Int64("traceId", request.TraceId)
+	logger.Info("AclPreFilter", traceId)
 	//TODO
 	bz, err := utils.Get("http://192.168.150.7:9180/ops_ctl/latest")
 	if err != nil {
@@ -37,7 +43,7 @@ func (HealthCheckFilter) Do(request *model.IrisReq, data interface{}) (bool, int
 	}
 
 	if h.Status == "success" && !h.Data.IsMaintained {
-		return true, nil, types.CodeSuccess
+		return nil, types.CodeSuccess
 	}
-	return false, nil, types.CodeSysmaintenance
+	return nil, types.CodeSysmaintenance
 }

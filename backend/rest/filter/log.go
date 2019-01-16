@@ -8,14 +8,11 @@ import (
 	"time"
 )
 
+// display user's request information,optional
 type LogPreFilter struct {
 }
 
-type LogPostFilter struct {
-}
-
-// display user's request information,optional
-func (LogPreFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
+func (LogPreFilter) Do(request *model.IrisReq, data interface{}) (interface{}, types.BizCode) {
 	start := time.Now()
 	request.TraceId = start.UnixNano()
 	request.Start = start
@@ -31,16 +28,23 @@ func (LogPreFilter) Do(request *model.IrisReq, data interface{}) (bool, interfac
 		}
 	}()
 
-	logger.Debug("LogPreFilter", traceId, apiPath, agent, formValue, urlValue)
-	return true, nil, types.CodeSysmaintenance
+	logger.Info("LogPreFilter", traceId, apiPath, agent, formValue, urlValue)
+	return nil, types.CodeSuccess
 }
 
-func (LogPreFilter) GetPath() string {
+func (LogPreFilter) Paths() string {
 	return GlobalFilterPath
 }
 
+func (LogPreFilter) Type() Type {
+	return Pre
+}
+
 // display user's request information,optional
-func (LogPostFilter) Do(request *model.IrisReq, data interface{}) (bool, interface{}, types.BizCode) {
+type LogPostFilter struct {
+}
+
+func (LogPostFilter) Do(request *model.IrisReq, data interface{}) (interface{}, types.BizCode) {
 	traceId := logger.Int64("traceId", request.TraceId)
 	coastSecond := time.Now().Unix() - request.Start.Unix()
 	coast := logger.Int64("coast", coastSecond)
@@ -49,13 +53,17 @@ func (LogPostFilter) Do(request *model.IrisReq, data interface{}) (bool, interfa
 			logger.Error("LogPostFilter failed", traceId)
 		}
 	}()
-	logger.Debug("LogPostFilter", traceId, coast)
+	logger.Info("LogPostFilter", traceId, coast)
 	if coastSecond >= 3 {
 		logger.Warn("LogPostFilter api coast most time", traceId)
 	}
-	return true, nil, types.CodeSysmaintenance
+	return nil, types.CodeSuccess
 }
 
-func (LogPostFilter) GetPath() string {
+func (LogPostFilter) Paths() string {
 	return GlobalFilterPath
+}
+
+func (LogPostFilter) Type() Type {
+	return Pre
 }
