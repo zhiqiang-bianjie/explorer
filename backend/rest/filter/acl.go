@@ -13,8 +13,8 @@ const AclList = "127.0.0.1"
 type AclPreFilter struct {
 }
 
-func (AclPreFilter) Paths() string {
-	return GlobalFilterPath
+func (AclPreFilter) Paths() []string {
+	return []string{GlobalFilterPath}
 }
 
 func (AclPreFilter) Type() Type {

@@ -32,8 +32,9 @@ func (RateLimitPreFilter) Do(request *model.IrisReq, data interface{}) (interfac
 	return nil, types.CodeSuccess
 }
 
-func (RateLimitPreFilter) Paths() string {
-	return GlobalFilterPath
+func (RateLimitPreFilter) Paths() []string {
+	return []string{GlobalFilterPath}
+	//return types.UrlRegisterQueryBlock
 }
 
 func (RateLimitPreFilter) Type() Type {

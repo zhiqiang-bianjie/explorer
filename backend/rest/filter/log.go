@@ -32,8 +32,8 @@ func (LogPreFilter) Do(request *model.IrisReq, data interface{}) (interface{}, t
 	return nil, types.CodeSuccess
 }
 
-func (LogPreFilter) Paths() string {
-	return GlobalFilterPath
+func (LogPreFilter) Paths() []string {
+	return []string{GlobalFilterPath}
 }
 
 func (LogPreFilter) Type() Type {
@@ -60,8 +60,8 @@ func (LogPostFilter) Do(request *model.IrisReq, data interface{}) (interface{}, 
 	return nil, types.CodeSuccess
 }
 
-func (LogPostFilter) Paths() string {
-	return GlobalFilterPath
+func (LogPostFilter) Paths() []string {
+	return []string{GlobalFilterPath}
 }
 
 func (LogPostFilter) Type() Type {

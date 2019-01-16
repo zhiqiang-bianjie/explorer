@@ -24,8 +24,8 @@ func (HealthCheckFilter) Type() Type {
 	return Pre
 }
 
-func (HealthCheckFilter) Paths() string {
-	return GlobalFilterPath
+func (HealthCheckFilter) Paths() []string {
+	return []string{GlobalFilterPath}
 }
 
 func (HealthCheckFilter) Do(request *model.IrisReq, data interface{}) (interface{}, types.BizCode) {

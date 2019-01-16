@@ -17,7 +17,7 @@ var filterChain = make(FChain, 0)
 
 type Filter interface {
 	Do(request *model.IrisReq, data interface{}) (interface{}, types.BizCode)
-	Paths() string
+	Paths() []string
 	Type() Type
 }
 
@@ -29,21 +29,20 @@ func Register(filter Filter) {
 }
 
 func DoFilters(req *model.IrisReq, data interface{}, typ Type) (interface{}, types.BizCode) {
-	var reqUrl = req.RequestURI
+	var reqUrl = strings.TrimPrefix(req.RequestURI, types.UrlRoot)
 	for _, f := range filterChain {
 		if typ != f.Type() {
 			continue
 		}
 		paths := f.Paths()
-		if paths == GlobalFilterPath {
+		if paths[0] == GlobalFilterPath {
 			data, err := f.Do(req, data)
 			if !err.Success() {
 				return data, err
 			}
 		} else {
-			urls := strings.Split(paths, ",")
-			for _, url := range urls {
-				if reqUrl == url {
+			for _, path := range paths {
+				if reqUrl == path {
 					data, err := f.Do(req, data)
 					if !err.Success() {
 						return data, err
