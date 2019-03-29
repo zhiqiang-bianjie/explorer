@@ -10,7 +10,7 @@
       <p class="proposals_information_content_title">Service Definition Information</p>
       <div class="proposals_detail_information_wrap">
         <div class="information_props_wrap">
-          <span class="information_props">Author :</span>
+          <span class="information_props">From :</span>
           <span v-show="author !== '--'" class="information_value information_show_trim jump_route" @click="jumpRoute(`/address/1/${author}`)">{{author}}</span>
           <span v-show="author == '--'" class="information_value information_show_trim ">{{author}}</span>
         </div>
@@ -21,7 +21,7 @@
           </span>
         </div>
         <div class="information_props_wrap">
-          <span class="information_props">Author Description :</span>
+          <span class="information_props">Publisher :</span>
           <span class="information_value">{{authorDescription}}</span>
         </div>
         <div class="information_props_wrap">
@@ -38,15 +38,17 @@
       </div>
     </div>
     <div :class="proposalsDetailWrap">
-      <p class="proposals_information_content_title" style='border-bottom:none !important;'>Service Bond Detail</p>
+      <p class="proposals_information_content_title" style='border-bottom:none !important;'>Service Binding Detail</p>
     </div>
     <div :class="proposalsDetailWrap">
       <div class="proposals_detail_table_wrap">
         <spin-component :showLoading="showLoading"/>
+        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize"></b-pagination>
         <blocks-list-table :items="bondRecord" :type="'ServiceBind'" :showNoData="showNoData" :min-width="tableMinWidth"></blocks-list-table>
         <div v-show="showNoData" class="no_data_show">
           No Data
         </div>
+        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
       </div>
     </div>
 
@@ -56,10 +58,12 @@
     <div :class="proposalsDetailWrap">
       <div class="proposals_detail_table_wrap">
         <spin-component :showLoading="showLoading"/>
+        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize"></b-pagination>
         <blocks-list-table :items="invocationRecord" :type="'ServiceInvocation'" :showNoData="showNoData" :min-width="tableMinWidth"></blocks-list-table>
         <div v-show="showNoData" class="no_data_show">
           No Data
         </div>
+        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
       </div>
     </div>
 
@@ -72,8 +76,8 @@
   import BlocksListTable from './table/BlocksListTable.vue';
   import SpinComponent from './commonComponents/SpinComponent';
 
-  const bondRecordTitle = [{'Hash' : '','Bond Chain Id' : '','Provider' : '','Bond Type' : '','Prices' : '','Response Time(s)':'','Status' : '',}];
-  const invocationRecordTitle = [{'Hash': "",'Request ID':'','Tx Type': "",'Send Address': "",'Receive Address': "",'Height': "",'Time': "",}];
+  const bondRecordTitle = [{'Hash' : '','Binding Chain Id' : '','From' : '','Binding Type' : '','Prices' : '','Response Time(s)':'','Status' : '',}];
+  const invocationRecordTitle = [{'Hash': "",'Request ID':'','Tx Type': "",'From': "",'To': "",'Height': "",'Time': "",}];
   export default {
     components: {
       BlocksListTable,
@@ -94,7 +98,7 @@
         author: "",
         authorDescription: "",
         tableMinWidth: "",
-        textareaRows: '2',
+        textareaRows: '4',
         iDLContent: '',
         parameterValue: ''
       }
@@ -126,9 +130,9 @@
             this.bondRecord = data.svc_bind_list.map(item =>{
               return {
                 'Hash' : item.hash,
-                'Bond Chain Id' : item.bind_chain_id,
-                'Provider' : item.provider,
-                'Bond Type' : item.binding_type.toUpperCase(),
+                'Binding Chain Id' : item.bind_chain_id,
+                'From' : item.provider,
+                'Binding Type' : item.binding_type.toUpperCase(),
                 'Prices' : Tools.formatMoney(item.price),
                 'Response Time' : item.level.avg_rsp_time / 1000 + "s",
                 'Status' : item.available,
@@ -139,9 +143,9 @@
               return {
                 'Hash' : item.hash,
                 'Request ID' : item.req_id,
-                'Tx Type' : item.tx_type,
-                'Send Address': item.send_addr,
-                'Receive Address': item.receive_addr,
+                'Tx Type' : item.tx_type.toUpperCase(),
+                'From': item.send_addr,
+                'To': item.receive_addr,
                 'Height': item.height,
                 'Time': item.time,
               }
@@ -448,5 +452,22 @@
     width: 97%;
     margin-right:20%;
     background: #EEE !important;
+  }
+  .pagination {
+    @include flex;
+    justify-content: flex-end;
+    @include borderRadius(0.025rem);
+    height:0.3rem;
+    margin-bottom: 0.1rem !important;
+    li{
+      height:0.3rem !important;
+      a{
+        box-shadow: none;
+      }
+      a:focus{
+        -webkit-box-shadow:0 0 0 .2rem rgba(255,255,255,.5);
+        box-shadow:0 0 0 .2rem rgba(255,255,255,.5)
+      }
+    }
   }
 </style>

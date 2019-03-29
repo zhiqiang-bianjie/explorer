@@ -14,6 +14,7 @@ type SvcDef struct {
 	Author            string   `json:"author"`
 	AuthorDescription string   `json:"author_description"`
 	IDLContent        string   `json:"idl_content"`
+	Status            string   `json:"status"`
 }
 
 type SvcBind struct {

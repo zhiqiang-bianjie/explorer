@@ -129,14 +129,14 @@
           <pre class="proposals-list">{{data.item['Hash'] ? `${String(data.item.Hash).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
-      <template slot='Name' slot-scope='data'>
-        <span class="skip_route" @click="skipRoute(`/Service/${data.item['Name']}/${data.item['Chain Id']}`)">
-          <pre class="proposals-list">{{data.item['Name'] ? data.item.Name : ''}}</pre>
+      <template slot='Code' slot-scope='data'>
+        <span class="skip_route" @click="skipRoute(`/Service/${data.item['Code']}/${data.item['Chain Id']}`)">
+          <pre class="proposals-list">{{data.item['Code'] ? data.item.Code : ''}}</pre>
         </span>
       </template>
-      <template slot='Publisher Address' slot-scope='data'>
-         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Publisher Address']}`)">
-          <pre class="proposals-list">{{data.item['Publisher Address'] ? `${String(data.item['Publisher Address']).substr(0,16)}...` : ''}}</pre>
+      <template slot='From' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['From']}`)">
+          <pre class="proposals-list">{{data.item['From'] ? `${String(data.item['From']).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
     </b-table>
@@ -147,14 +147,14 @@
           <pre class="proposals-list">{{data.item['Hash'] ? `${String(data.item.Hash).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
-      <template slot='Provider' slot-scope='data'>
-         <span class="skip_route" @click="skipRoute(`/address/1/${data.item.Provider}`)">
-          <pre class="proposals-list">{{data.item['Provider'] ? `${String(data.item.Provider).substr(0,16)}...` : ''}}</pre>
+      <template slot='From' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item.From}`)">
+          <pre class="proposals-list">{{data.item['From'] ? `${String(data.item.From).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
       <template slot='Status' slot-scope='data'>
          <span>
-          <pre :style="data.item['Status'] ? 'color:green;':'color:red;'">{{data.item['Status'] ? '绑定':'失效'}}</pre>
+          <pre :style="data.item['Status'] ? 'color:green;':'color:red;'">{{data.item['Status'] ? 'Enable':'Disable'}}</pre>
         </span>
       </template>
     </b-table>
@@ -165,14 +165,14 @@
           <pre class="proposals-list">{{data.item['Hash'] ? `${String(data.item.Hash).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
-      <template slot='Send Address' slot-scope='data'>
-         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Send Address']}`)">
-          <pre class="proposals-list">{{data.item['Send Address'] ? `${String(data.item['Send Address']).substr(0,16)}...` : ''}}</pre>
+      <template slot='From' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['From']}`)">
+          <pre class="proposals-list">{{data.item['From'] ? `${String(data.item['From']).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
-      <template slot='Receive Address' slot-scope='data'>
-         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Receive Address']}`)">
-          <pre class="proposals-list">{{data.item['Receive Address'] ? `${String(data.item['Receive Address']).substr(0,16)}...` : ''}}</pre>
+      <template slot='To' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['To']}`)">
+          <pre class="proposals-list">{{data.item['To'] ? `${String(data.item['To']).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
       <template slot='Height' slot-scope='data'>

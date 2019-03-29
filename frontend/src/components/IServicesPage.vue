@@ -114,20 +114,21 @@
             this.items = services.map(item =>{
               return {
                 'Hash' : item.hash,
-                'Name' : item.name,
+                'Code' : item.name,
                 'Chain Id' : item.chain_id,
                 'Publisher' : item.author_description,
-                'Publisher Address' : item.author,
+                'From' : item.author,
+                'Status' : item.status,
                 'Description' : item.description,
               }
             })
           }else {
-            this.items = [{"Hash":"","Name":"","Chain Id":"","Publisher Description" :"","Publisher Address":"","Description" :""}];
+            this.items = [{"Hash":"","Code":"","Chain Id":"","Publisher Description" :"","From":"","Status":"","Description" :""}];
             this.showNoData = true;
           }
           this.showLoading = false;
         }).catch(e => {
-          this.items = [{"Hash":"", "Name":"","Chain Id":"","Publisher Description" :"","Publisher Address":"","Description" :""}];
+          this.items = [{"Hash":"", "Code":"","Chain Id":"","Publisher Description" :"","From":"","Status":"","Description" :""}];
           this.showNoData = true;
           this.showLoading = false;
         });
