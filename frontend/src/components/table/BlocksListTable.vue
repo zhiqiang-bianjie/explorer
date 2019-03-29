@@ -123,6 +123,70 @@
       </template>
     </b-table>
 
+    <b-table :fields='fields' :items='items' striped  v-if="type === 'Services'" class="show_trim service_detail_list">
+      <template slot='Hash' slot-scope='data'>
+        <span class="skip_route" @click="skipRoute(`/tx?txHash=${data.item['Hash']}`)">
+          <pre class="proposals-list">{{data.item['Hash'] ? `${String(data.item.Hash).substr(0,16)}...` : ''}}</pre>
+        </span>
+      </template>
+      <template slot='Name' slot-scope='data'>
+        <span class="skip_route" @click="skipRoute(`/Service/${data.item['Name']}/${data.item['Chain Id']}`)">
+          <pre class="proposals-list">{{data.item['Name'] ? data.item.Name : ''}}</pre>
+        </span>
+      </template>
+      <template slot='Publisher Address' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Publisher Address']}`)">
+          <pre class="proposals-list">{{data.item['Publisher Address'] ? `${String(data.item['Publisher Address']).substr(0,32)}...` : ''}}</pre>
+        </span>
+      </template>
+    </b-table>
+
+    <b-table :fields='fields' :items='items' striped v-if="type === 'ServiceBind'" nodelabel  class="service_detail_list">
+      <template slot='Hash' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/tx?txHash=${data.item['Hash']}`)">
+          <pre class="proposals-list">{{data.item['Hash'] ? `${String(data.item.Hash).substr(0,16)}...` : ''}}</pre>
+        </span>
+      </template>
+      <template slot='Provider' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item.Provider}`)">
+          <pre class="proposals-list">{{data.item['Provider'] ? `${String(data.item.Provider).substr(0,32)}...` : ''}}</pre>
+        </span>
+      </template>
+      <template slot='Prices' slot-scope='data'>
+         <span>
+          <pre>{{formatMoney(data.item['Prices'])}}</pre>
+        </span>
+      </template>
+      <template slot='Status' slot-scope='data'>
+         <span>
+          <pre>{{data.item['Status'] ? '绑定':'失效'}}</pre>
+        </span>
+      </template>
+    </b-table>
+
+    <b-table :fields='fields' :items='items' striped v-if="type === 'ServiceInvocation'" nodelabel  class="service_detail_list">
+      <template slot='Hash' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/tx?txHash=${data.item['Hash']}`)">
+          <pre class="proposals-list">{{data.item['Hash'] ? `${String(data.item.Hash).substr(0,16)}...` : ''}}</pre>
+        </span>
+      </template>
+      <template slot='Send Address' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Send Address']}`)">
+          <pre class="proposals-list">{{data.item['Send Address'] ? `${String(data.item['Send Address']).substr(0,32)}...` : ''}}</pre>
+        </span>
+      </template>
+      <template slot='Receive Address' slot-scope='data'>
+         <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Receive Address']}`)">
+          <pre class="proposals-list">{{data.item['Receive Address'] ? `${String(data.item['Receive Address']).substr(0,32)}...` : ''}}</pre>
+        </span>
+      </template>
+      <template slot='Height' slot-scope='data'>
+        <span class="skip_route" @click="skipRoute(`/blocks_detail/${data.item.Height}`)">
+          {{data.item.Height}}
+        </span>
+      </template>
+    </b-table>
+
     <b-table :fields='fields' :items='items' striped v-if="type === 'ProposalsDetail'" nodelabel  class="proposal_detail_list">
       <template slot='Voter' slot-scope='data'>
         <span class="skip_route_gray">
@@ -230,6 +294,10 @@
           this.$router.push(path);
           Tools.scrollToTop()
         }
+      },
+      formatMoney(item){
+        console.log(item);
+        return Tools.formatMoney(item)
       }
     }
   }
@@ -330,6 +398,15 @@
     }
     th:nth-child(2){
       width: 35% !important;
+    }
+  }
+
+  .service_detail_list tr{
+    th:nth-child(1){
+      width: 20% !important;
+    }
+    th:nth-child(2){
+      width: 10% !important;
     }
   }
   //使用rem设置max-width不生效

@@ -23,6 +23,7 @@ var (
 
 	txService        = &TxService{}
 	delegatorService = &DelegatorService{}
+	iService         = &IService{}
 )
 
 const (
@@ -34,6 +35,7 @@ const (
 	Candidate
 	Tx
 	Delegator
+	Iservice
 )
 
 type Module int
@@ -54,6 +56,8 @@ func Get(m Module) Service {
 		return txService
 	case Delegator:
 		return delegatorService
+	case Iservice:
+		return iService
 	}
 	return nil
 }

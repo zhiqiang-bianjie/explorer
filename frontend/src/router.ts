@@ -12,6 +12,8 @@ import ProposalsDetail from "./components/ProposalsDetail.vue";
 import SearchResult from "./components/searchResult.vue";
 import Help from "./components/clearStorageHelpPage.vue";
 import Version from "./components/version.vue";
+import ServicesPage from "./components/ServicesPage.vue";
+import ServiceDetail from "./components/ServiceDetail.vue";
 
 Vue.use(Router);
 
@@ -91,6 +93,14 @@ export default new Router({
     },
     {
       path: '/help', component: Help,
+    },
+    {
+      path: '/Services',
+      component: ServicesPage,
+    },
+    {
+      path: '/Service/:svcName/:defChainId',
+      component: ServiceDetail,
     },
   ]
 

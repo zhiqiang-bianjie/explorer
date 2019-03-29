@@ -60,6 +60,10 @@ const (
 	UrlRegisterQueryTxsByDay     = "/txsByDay"
 	UrlRegisterQueryTx           = "/tx/{hash}"
 
+	//IService
+	UrlRegisterQueryServiceList = "/service"
+	UrlRegisterQueryService     = "/service/{svcName}/{defChainId}"
+
 	//version
 	UrlRegisterQueryApiVersion = "/version"
 

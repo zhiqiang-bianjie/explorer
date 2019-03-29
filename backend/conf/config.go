@@ -89,14 +89,14 @@ func init() {
 
 func loadDefault() {
 	defaultConfig[EnvironmentDevelop] = map[string]string{
-		KeyDbAddr:         "192.168.150.31:27017",
+		KeyDbAddr:         "34.80.141.14:27019",
 		KeyDATABASE:       "sync-iris",
 		KeyDbUser:         "iris",
 		KeyDbPwd:          "irispassword",
 		KeyDbPoolLimit:    "4096",
 		KeyServerPort:     "8080",
-		KeyAddrHubLcd:     "http://irisnet-lcd.dev.rainbow.one",
-		KeyAddrHubNode:    "http://192.168.150.31:30657",
+		KeyAddrHubLcd:     "https://irisnet-lcd.stage.rainbow.one",
+		KeyAddrHubNode:    "http://34.80.141.14:30657/",
 		KeyAddrFaucet:     "http://192.168.150.31:4000",
 		KeyChainId:        "rainbow-dev",
 		KeyApiVersion:     "v0.6.5",
@@ -118,7 +118,7 @@ func loadDefault() {
 		KeyDbPwd:          "irispassword",
 		KeyDbPoolLimit:    "4096",
 		KeyServerPort:     "8080",
-		KeyAddrHubLcd:     "http://irisnet-lcd.dev.rainbow.one",
+		KeyAddrHubLcd:     "http://35.220.142.249:1317",
 		KeyAddrHubNode:    "http://192.168.150.31:30657",
 		KeyAddrFaucet:     "http://192.168.150.31:4000",
 		KeyChainId:        "rainbow-dev",

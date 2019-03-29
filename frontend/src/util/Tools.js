@@ -430,6 +430,27 @@ export default class Tools{
       }
       return noObjList;
     }
-
+  }
+  static formatMoney(money){
+    let MoneyString = function (item) {
+      let denom = item.denom;
+      let amount = item.amount;
+      if (denom === "iris-atto"){
+        amount = Tools.formatNumber(item.amount);
+      }
+      return `${amount}${denom.toUpperCase()}`
+    };
+    if(money instanceof Array){
+      let moneyStr = '';
+      money.map(item => {
+        moneyStr = `${moneyStr} ${MoneyString(item)}`;
+        return moneyStr
+      });
+      return moneyStr
+    }
+    if (!money){
+      return ""
+    }
+    return MoneyString(money)
   }
 }

@@ -64,6 +64,7 @@ func registerApi(r *mux.Router) {
 		controller.RegisterTextSearch,
 		controller.RegisterPing,
 		controller.RegisterHome,
+		controller.RegisterIService,
 	}
 
 	for _, routeRegistrar := range routeRegistrars {

@@ -75,6 +75,9 @@
         <span class="nav_item common_item_style" :class="activeClassName === '/Proposals'?'nav_item_active':''"
               @click="featureButtonClick('/Proposals')"
         >Proposals</span>
+        <span class="nav_item common_item_style" :class="activeClassName === '/Services'?'nav_item_active':''"
+              @click="featureButtonClick('/Services')"
+        >Services</span>
         <span v-if="flShowFaucet" class="nav_item common_item_style faucet_content" :class="activeClassName === '/faucet'?'nav_item_active':''"
               @click="featureButtonClick('/faucet')"
         >Faucet</span>
@@ -416,6 +419,8 @@
           this.activeClassName = '/faucet';
         } else if(path.includes('/Proposals')){
           this.activeClassName = '/Proposals';
+        }else if(path.includes('/Services')){
+          this.activeClassName = '/Services';
         }else if(path.includes('/nodespage')){
           this.activeClassName = '/nodespage';
         }else {

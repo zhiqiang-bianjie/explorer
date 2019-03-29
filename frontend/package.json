@@ -15,6 +15,9 @@
     "commander": "^2.16.0",
     "echarts": "^4.1.0",
     "fs": "^0.0.1-security",
+    "irisnet-crypto": "git+https://github.com/irisnet/irisnet-crypto.git#v1.1.8-conf",
+    "jquery": "^3.2.1",
+    "serve": "^10.1.2",
     "typescript": "^3.0.1",
     "vue": "^2.5.16",
     "vue-class-component": "^6.0.0",
@@ -22,9 +25,7 @@
     "vue-nocaptcha": "^0.1.1",
     "vue-property-decorator": "^6.0.0",
     "vue-router": "^3.0.1",
-    "jquery": "^3.2.1",
-    "vuex": "^3.0.1",
-    "irisnet-crypto": "git+https://github.com/irisnet/irisnet-crypto.git#v1.1.8-conf"
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-beta.15",

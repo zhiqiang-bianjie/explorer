@@ -15,6 +15,7 @@ db.createCollection("val_black_list");
 // create index
 db.ex_config.createIndex({"env_nm": 1}, {"unique": true});
 db.val_black_list.createIndex({"operator_addr": 1}, {"unique": true});
+db.block.createIndex({"time": -1});
 
 // init data
 db.ex_config.insert({"env_nm":"mainnet","host":"https://www.irisplorer.io","chain_id":"irishub","show_faucet":0});
