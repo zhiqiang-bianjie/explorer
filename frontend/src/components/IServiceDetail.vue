@@ -71,7 +71,9 @@
   import Service from "../util/axios"
   import BlocksListTable from './table/BlocksListTable.vue';
   import SpinComponent from './commonComponents/SpinComponent';
-  import Constant from "../constant/Constant"
+
+  const bondRecordTitle = [{'Hash' : '','Bond Chain Id' : '','Provider' : '','Bond Type' : '','Prices' : '','Response Time(s)':'','Status' : '',}];
+  const invocationRecordTitle = [{'Hash': "",'Request ID':'','Tx Type': "",'Send Address': "",'Receive Address': "",'Height': "",'Time': "",}];
   export default {
     components: {
       BlocksListTable,
@@ -117,6 +119,7 @@
           if(data){
             this.name = data.name;
             this.author = data.author;
+            this.iDLContent = data.idl_content;
             this.chainId = data.chain_id;
             this.authorDescription = data.author_description;
             this.description = data.description;
@@ -125,15 +128,17 @@
                 'Hash' : item.hash,
                 'Bond Chain Id' : item.bind_chain_id,
                 'Provider' : item.provider,
-                'Bond Type' : item.binding_type,
-                'Prices' : item.price,
+                'Bond Type' : item.binding_type.toUpperCase(),
+                'Prices' : Tools.formatMoney(item.price),
+                'Response Time' : item.level.avg_rsp_time / 1000 + "s",
                 'Status' : item.available,
               }
             });
 
-            this.invocationRecord = data.svc_tx.map(item =>{
+            this.invocationRecord = data.svc_tx_list.map(item =>{
               return {
                 'Hash' : item.hash,
+                'Request ID' : item.req_id,
                 'Tx Type' : item.tx_type,
                 'Send Address': item.send_addr,
                 'Receive Address': item.receive_addr,
@@ -143,41 +148,13 @@
             });
           }else {
               this.showNoData = false;
-              this.bondRecord = [{
-                'Hash' : '',
-                'Bond Chain Id' : '',
-                'Provider' : '',
-                'Bond Type' : '',
-                'Prices' : '',
-                'Status' : '',
-              }];
-            this.invocationRecord = [{
-              'Hash': "",
-              'Tx Type': "",
-              'Send Address': "",
-              'Receive Address': "",
-              'Height': "",
-              'Time': "",
-            }];
+              this.bondRecord = bondRecordTitle;
+              this.invocationRecord = invocationRecordTitle;
               this.showNoData = true
             }
         }).catch(e => {
-          this.bondRecord = [{
-            'Hash' : '',
-            'Bond Chain Id' : '',
-            'Provider' : '',
-            'Bond Type' : '',
-            'Prices' : '',
-            'Status' : '',
-          }];
-          this.invocationRecord = [{
-            'Hash': "",
-            'Tx Type': "",
-            'Send Address': "",
-            'Receive Address': "",
-            'Height': "",
-            'Time': "",
-          }];
+          this.bondRecord = bondRecordTitle;
+          this.invocationRecord = invocationRecordTitle;
           this.showLoading = false;
           this.showNoData = true
         })

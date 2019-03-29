@@ -22,6 +22,31 @@ var svcDefList = []model.SvcDef{
 		Author:            "iaa1q7602ujxxx0urfw7twm0uk5m7n6l9gqsallwar",
 		AuthorDescription: "金融公司1",
 		Description:       "保理申请服务定义",
+		IDLContent: `syntax = "proto2";
+option java_package = "com.lhc.protobuf";
+option java_outer_classname = "AddressBookProtos";
+
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+  repeated PhoneNumber phones = 4;
+}
+
+message AddressBook {
+  repeated Person people = 1;
+}`,
 	},
 	{
 		Hash:              "42C70BE32F4DFBBDD14ECEC395A313582792F7FB10C042D10F2AF6F0B7811374",
@@ -53,6 +78,10 @@ var SvcBindList = []model.SvcBind{
 			Denom:  "iris",
 			Amount: 1.5,
 		}},
+		Level: model.Level{
+			AvgRspTime: 2000,
+			UsableTime: 9999,
+		},
 		Available: true,
 	},
 	{
@@ -63,9 +92,16 @@ var SvcBindList = []model.SvcBind{
 		Provider:    "iaa1uex02kyx02qap5lrakn5xv0glq49e2ww54d7ka",
 		BindingType: "local",
 		Prices: document.Coins{{
-			Denom:  "iris",
-			Amount: 1.5,
+			Denom:  "iris-atto",
+			Amount: 1000000000000000000,
+		}, {
+			Denom:  "atom",
+			Amount: 1,
 		}},
+		Level: model.Level{
+			AvgRspTime: 2500,
+			UsableTime: 9900,
+		},
 		Available: false,
 	},
 	{
@@ -86,6 +122,7 @@ var SvcBindList = []model.SvcBind{
 var svcTxList = []model.SvcTx{
 	{
 		Hash:        "5B1E3051180FD24A878C888F22E58D1B270835978BA8BAEB32F5153F65A98121",
+		ReqId:       "35394-35396-1",
 		TxType:      "service_call",
 		SendAddr:    "iaa163s33re5y7xhuu05r5d8ekwkpdzsjtue73qmpt",
 		ReceiveAddr: "iaa1z29lpxul0wtewwmkt9y47r8pxdp77jg2p2w8a8",
@@ -95,6 +132,7 @@ var svcTxList = []model.SvcTx{
 	},
 	{
 		Hash:        "B963F8CD83225B60F39E04D96CC21BDE3F8B04A5CAA5F3688FBF9263707954D9",
+		ReqId:       "35394-35396-1",
 		TxType:      "service_respond",
 		SendAddr:    "iaa1z29lpxul0wtewwmkt9y47r8pxdp77jg2p2w8a8",
 		ReceiveAddr: "iaa163s33re5y7xhuu05r5d8ekwkpdzsjtue73qmpt",
@@ -122,12 +160,12 @@ func (service *IService) Query(name, defChainId string) interface{} {
 		}
 	}
 	svcInfo.SvcBindList = svcBindList
-	svcInfo.SvcTx = svcTxList
+	svcInfo.SvcTxList = svcTxList
 	return svcInfo
 }
 
 type IServiceInfo struct {
 	model.SvcDef
 	SvcBindList []model.SvcBind `json:"svc_bind_list"`
-	SvcTx       []model.SvcTx   `json:"svc_tx"`
+	SvcTxList   []model.SvcTx   `json:"svc_tx_list"`
 }

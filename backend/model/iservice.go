@@ -57,6 +57,7 @@ type SvcResponse struct {
 
 type SvcTx struct {
 	Hash        string    `json:"hash"`
+	ReqId       string    `json:"req_id"`
 	TxType      string    `json:"tx_type"`
 	SendAddr    string    `json:"send_addr"`
 	ReceiveAddr string    `json:"receive_addr"`

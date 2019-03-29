@@ -110,8 +110,8 @@
         let url=`/api/service?page=${currentPage}&size=${pageSize}`;
         Service.http(url).then((services)=>{
           if(services){
-            let that = this;
-            that.items = services.map(item =>{
+            this.count = services.length;
+            this.items = services.map(item =>{
               return {
                 'Hash' : item.hash,
                 'Name' : item.name,

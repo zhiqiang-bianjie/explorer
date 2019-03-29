@@ -437,6 +437,7 @@ export default class Tools{
       let amount = item.amount;
       if (denom === "iris-atto"){
         amount = Tools.formatNumber(item.amount);
+        denom = "IRIS"
       }
       return `${amount}${denom.toUpperCase()}`
     };

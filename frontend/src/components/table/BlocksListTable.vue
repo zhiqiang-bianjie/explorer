@@ -136,7 +136,7 @@
       </template>
       <template slot='Publisher Address' slot-scope='data'>
          <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Publisher Address']}`)">
-          <pre class="proposals-list">{{data.item['Publisher Address'] ? `${String(data.item['Publisher Address']).substr(0,32)}...` : ''}}</pre>
+          <pre class="proposals-list">{{data.item['Publisher Address'] ? `${String(data.item['Publisher Address']).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
     </b-table>
@@ -149,17 +149,12 @@
       </template>
       <template slot='Provider' slot-scope='data'>
          <span class="skip_route" @click="skipRoute(`/address/1/${data.item.Provider}`)">
-          <pre class="proposals-list">{{data.item['Provider'] ? `${String(data.item.Provider).substr(0,32)}...` : ''}}</pre>
-        </span>
-      </template>
-      <template slot='Prices' slot-scope='data'>
-         <span>
-          <pre>{{formatMoney(data.item['Prices'])}}</pre>
+          <pre class="proposals-list">{{data.item['Provider'] ? `${String(data.item.Provider).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
       <template slot='Status' slot-scope='data'>
          <span>
-          <pre>{{data.item['Status'] ? '绑定':'失效'}}</pre>
+          <pre :style="data.item['Status'] ? 'color:green;':'color:red;'">{{data.item['Status'] ? '绑定':'失效'}}</pre>
         </span>
       </template>
     </b-table>
@@ -172,12 +167,12 @@
       </template>
       <template slot='Send Address' slot-scope='data'>
          <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Send Address']}`)">
-          <pre class="proposals-list">{{data.item['Send Address'] ? `${String(data.item['Send Address']).substr(0,32)}...` : ''}}</pre>
+          <pre class="proposals-list">{{data.item['Send Address'] ? `${String(data.item['Send Address']).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
       <template slot='Receive Address' slot-scope='data'>
          <span class="skip_route" @click="skipRoute(`/address/1/${data.item['Receive Address']}`)">
-          <pre class="proposals-list">{{data.item['Receive Address'] ? `${String(data.item['Receive Address']).substr(0,32)}...` : ''}}</pre>
+          <pre class="proposals-list">{{data.item['Receive Address'] ? `${String(data.item['Receive Address']).substr(0,16)}...` : ''}}</pre>
         </span>
       </template>
       <template slot='Height' slot-scope='data'>
@@ -294,10 +289,6 @@
           this.$router.push(path);
           Tools.scrollToTop()
         }
-      },
-      formatMoney(item){
-        console.log(item);
-        return Tools.formatMoney(item)
       }
     }
   }
