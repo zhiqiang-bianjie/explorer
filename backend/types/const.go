@@ -99,6 +99,17 @@ var (
 	TypeSubmitProposal                = "SubmitProposal"
 	TypeDeposit                       = "Deposit"
 	TypeVote                          = "Vote"
+	TypeServiceDefine                 = "service_define"
+	TypeServiceBind                   = "service_bind"
+	TypeServiceBindingUpdate          = "service_binding_update"
+	TypeServiceDisable                = "service_disable"
+	TypeServiceEnable                 = "service_enable"
+	TypeServiceRefundDeposit          = "service_refund_deposit"
+	TypeServiceCall                   = "service_call"
+	TypeServiceRespond                = "service_respond"
+	TypeServiceRefundFees             = "service_refund_fees"
+	TypeServiceWithdrawFees           = "service_withdraw_fees"
+	TypeServiceWithdrawFeeTax         = "service_withdraw_fee_tax"
 
 	TypeValStatusUnbonded  = "Unbonded"
 	TypeValStatusUnbonding = "Unbonding"
@@ -107,6 +118,7 @@ var (
 	DeclarationList = []string{TypeCreateValidator, TypeEditValidator, TypeUnjail}
 	StakeList       = []string{TypeDelegate, TypeBeginRedelegation, TxTypeSetWithdrawAddress, TypeBeginUnbonding, TxTypeWithdrawDelegatorReward, TxTypeWithdrawDelegatorRewardsAll, TxTypeWithdrawValidatorRewardsAll}
 	GovernanceList  = []string{TypeSubmitProposal, TypeDeposit, TypeVote}
+	ServiceList     = []string{TypeServiceDefine, TypeServiceBind, TypeServiceBindingUpdate, TypeServiceDisable, TypeServiceEnable, TypeServiceRefundDeposit, TypeServiceCall, TypeServiceRespond, TypeServiceRefundFees, TypeServiceWithdrawFees, TypeServiceWithdrawFeeTax}
 )
 
 func IsDeclarationType(typ string) bool {
@@ -145,6 +157,18 @@ func IsGovernanceType(typ string) bool {
 	return false
 }
 
+func IsServiceType(typ string) bool {
+	if len(typ) == 0 {
+		return false
+	}
+	for _, t := range ServiceList {
+		if t == typ {
+			return true
+		}
+	}
+	return false
+}
+
 type TxType int
 
 const (
@@ -153,6 +177,7 @@ const (
 	Declaration
 	Stake
 	Gov
+	Service
 )
 
 func Convert(typ string) TxType {
@@ -164,6 +189,8 @@ func Convert(typ string) TxType {
 		return Declaration
 	} else if IsGovernanceType(typ) {
 		return Gov
+	} else if IsServiceType(typ) {
+		return Service
 	}
 	panic(CodeUnSupportTx)
 }
@@ -176,6 +203,8 @@ func TxTypeFromString(typ string) TxType {
 		return Declaration
 	} else if typ == "gov" {
 		return Gov
+	} else if typ == "service" {
+		return Service
 	}
 	panic(CodeUnSupportTx)
 }

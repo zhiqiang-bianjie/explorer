@@ -98,6 +98,10 @@ func queryPage(collation string, data interface{}, m map[string]interface{}, sor
 	return orm.QueryList(collation, data, m, sort, page, size)
 }
 
+func findByPage(collation *mgo.Collection, data interface{}, m map[string]interface{}, sort string, page, size int) model.PageVo {
+	return orm.QueryByPage(collation, data, m, sort, page, size)
+}
+
 func queryOne(collation string, data interface{}, m map[string]interface{}) error {
 	return orm.QueryOne(collation, data, m)
 }

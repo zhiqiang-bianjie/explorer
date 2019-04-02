@@ -154,7 +154,7 @@
       </template>
       <template slot='Status' slot-scope='data'>
          <span>
-          <pre :style="data.item['Status'] ? 'color:green;':'color:red;'">{{data.item['Status'] ? 'Enable':'Disable'}}</pre>
+          <pre :style="data.item['Status'] ? 'color:green;':'color:red;'">{{data.item['Status'] ? 'ENABLE':'DISABLE'}}</pre>
         </span>
       </template>
     </b-table>
@@ -394,7 +394,7 @@
 
   .service_detail_list tr{
     th:nth-child(1){
-      width: 20% !important;
+      width: 15% !important;
     }
     th:nth-child(2){
       width: 10% !important;

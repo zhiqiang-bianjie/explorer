@@ -50,6 +50,19 @@ func QueryList(collation string, data interface{}, m map[string]interface{}, sor
 	}
 }
 
+func QueryByPage(collation *mgo.Collection, data interface{}, m map[string]interface{}, sort string, page, size int) model.PageVo {
+	count, err := collation.Find(m).Count()
+	if err != nil {
+		return model.PageVo{Count: 0, Data: nil}
+	}
+	err = collation.Find(m).Skip((page - 1) * size).Limit(size).Sort(sort).All(data)
+	if err != nil {
+		return model.PageVo{Count: count, Data: nil}
+	} else {
+		return model.PageVo{Count: count, Data: data}
+	}
+}
+
 func QueryOne(collation string, data interface{}, m map[string]interface{}) error {
 	c := GetDatabase().C(collation)
 	defer c.Database.Session.Close()

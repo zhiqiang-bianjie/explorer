@@ -73,6 +73,11 @@ func registerQueryTxList(r *mux.Router) error {
 				"$in": types.GovernanceList,
 			}
 			break
+		case types.Service:
+			query["type"] = bson.M{
+				"$in": types.ServiceList,
+			}
+			break
 		}
 		result = tx.QueryList(query, page, size)
 		return result

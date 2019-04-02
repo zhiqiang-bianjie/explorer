@@ -314,8 +314,10 @@ func (service *TxService) buildTx(tx document.CommonTx) interface{} {
 		}
 
 		return govTx
+	case types.Service:
+		return buildBaseTx(tx)
 	}
-	return nil
+	return tx
 }
 
 func buildBaseTx(tx document.CommonTx) model.BaseTx {

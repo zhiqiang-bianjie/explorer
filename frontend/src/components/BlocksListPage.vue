@@ -193,6 +193,9 @@
         }else if(this.$route.params.param === 'Governance'){
           this.listTitleName = "Governance";
           url = `/api/tx/gov/${currentPage}/${pageSize}`
+        }else if(this.$route.params.param === 'Service'){
+          this.listTitleName = "Service";
+          url = `/api/tx/service/${currentPage}/${pageSize}`
         }
         Service.http(url).then((txList) => {
           that.count = txList.Count;

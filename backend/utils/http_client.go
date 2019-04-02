@@ -11,7 +11,7 @@ import (
 )
 
 var client http.Client
-var timeout = 5 * time.Second
+var timeout = 10 * time.Second
 var keepAlive = 30 * time.Second
 
 func init() {

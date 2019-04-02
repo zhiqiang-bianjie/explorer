@@ -43,12 +43,12 @@
     <div :class="proposalsDetailWrap">
       <div class="proposals_detail_table_wrap">
         <spin-component :showLoading="showLoading"/>
-        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize"></b-pagination>
+        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcBindPage" :per-page="pageSize"></b-pagination>
         <blocks-list-table :items="bondRecord" :type="'ServiceBind'" :showNoData="showNoData" :min-width="tableMinWidth"></blocks-list-table>
         <div v-show="showNoData" class="no_data_show">
           No Data
         </div>
-        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
+        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcBindPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
       </div>
     </div>
 
@@ -58,12 +58,12 @@
     <div :class="proposalsDetailWrap">
       <div class="proposals_detail_table_wrap">
         <spin-component :showLoading="showLoading"/>
-        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize"></b-pagination>
+        <b-pagination size="md" :total-rows="svcTxCnt" v-model="currentPage" :per-page="pageSize"></b-pagination>
         <blocks-list-table :items="invocationRecord" :type="'ServiceInvocation'" :showNoData="showNoData" :min-width="tableMinWidth"></blocks-list-table>
         <div v-show="showNoData" class="no_data_show">
           No Data
         </div>
-        <b-pagination size="md" :total-rows="count" v-model="currentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
+        <b-pagination size="md" :total-rows="svcTxCnt" v-model="currentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
       </div>
     </div>
 
@@ -76,12 +76,30 @@
   import BlocksListTable from './table/BlocksListTable.vue';
   import SpinComponent from './commonComponents/SpinComponent';
 
-  const bondRecordTitle = [{'Hash' : '','Binding Chain Id' : '','From' : '','Binding Type' : '','Prices' : '','Response Time(s)':'','Status' : '',}];
+  const bondRecordTitle = [{'Hash' : '','Binding Chain Id' : '','From' : '','Binding Type' : '','Prices' : '','AvgRspTime':'','UsableTime':'','Status' : '',}];
   const invocationRecordTitle = [{'Hash': "",'Request ID':'','Tx Type': "",'From': "",'To': "",'Height': "",'Time': "",}];
   export default {
     components: {
       BlocksListTable,
       SpinComponent
+    },
+    watch: {
+      svcBindPage(current) {
+        debugger;
+        this.svcCurrentPage = current;
+        this.$router.push({
+          path: this.$route.path,
+          query:{
+            pagenum: this.svcCurrentPage
+          }
+        });
+        new Promise((resolve)=>{
+          this.getSvcBinding(current, this.pageSize);
+          resolve();
+        }).then(()=>{
+          document.body.scrollTop = 0;
+        })
+      },
     },
     data() {
       return {
@@ -91,16 +109,21 @@
         invocationRecord: [],
         showLoading:false,
         showNoData: false,
-        count: "",
+        svcCurrentPage: "",
+        svcBindCnt: "",
+        svcTxCnt: "",
         chainId: "",
         name: "",
         description: "",
         author: "",
         authorDescription: "",
         tableMinWidth: "",
-        textareaRows: '4',
+        textareaRows: '10',
         iDLContent: '',
-        parameterValue: ''
+        parameterValue: '',
+        svcName: '',
+        defChainId: '',
+        pageSize: 2
       }
     },
     beforeMount() {
@@ -117,7 +140,9 @@
     methods: {
       getIService() {
         this.showLoading = true;
-        let url = `/api/service/${this.$route.params.svcName}/${this.$route.params.defChainId}`;
+        this.svcName = this.$route.params.svcName;
+        this.defChainId = this.$route.params.defChainId;
+        let url = `/api/service/${this.svcName}/${this.defChainId}`;
         Service.http(url).then((data) => {
           this.showLoading = false;
           if(data){
@@ -127,19 +152,22 @@
             this.chainId = data.chain_id;
             this.authorDescription = data.author_description;
             this.description = data.description;
-            this.bondRecord = data.svc_bind_list.map(item =>{
+            this.svcBindCnt = data.svc_bind_list.Count;
+            this.bondRecord = data.svc_bind_list.Data.map(item =>{
               return {
                 'Hash' : item.hash,
                 'Binding Chain Id' : item.bind_chain_id,
                 'From' : item.provider,
                 'Binding Type' : item.binding_type.toUpperCase(),
                 'Prices' : Tools.formatMoney(item.price),
-                'Response Time' : item.level.avg_rsp_time / 1000 + "s",
+                'AvgRspTime' : item.level.avg_rsp_time / 1000 + "s",
+                'UsableTime' : item.level.usable_time,
                 'Status' : item.available,
               }
             });
 
-            this.invocationRecord = data.svc_tx_list.map(item =>{
+            this.svcTxCnt = data.svc_tx_list.Count;
+            this.invocationRecord = data.svc_tx_list.Data.map(item =>{
               return {
                 'Hash' : item.hash,
                 'Request ID' : item.req_id,
@@ -163,6 +191,28 @@
           this.showNoData = true
         })
 
+      },
+      getSvcBinding(){
+        debugger;
+        let url = `/api/service/binding/${this.svcName}/${this.defChainId}`;
+        Service.http(url).then((response) => {
+          this.showLoading = false;
+          if(response || response.Count > 0){
+            let data = response.Data;
+            this.bondRecord = data.map(item =>{
+              return {
+                'Hash' : item.hash,
+                'Binding Chain Id' : item.bind_chain_id,
+                'From' : item.provider,
+                'Binding Type' : item.binding_type.toUpperCase(),
+                'Prices' : Tools.formatMoney(item.price),
+                'AvgRspTime' : item.level.avg_rsp_time / 1000 + "s",
+                'UsableTime' : item.level.usable_time,
+                'Status' : item.available,
+              }
+            });
+          }
+        })
       },
       jumpRoute(path) {
         this.$router.push(path);

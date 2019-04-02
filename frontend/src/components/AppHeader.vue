@@ -71,6 +71,8 @@
                 v-show="showSubTransaction">Stakes</span>
           <span class="sub_btn_item" @click="featureButtonClick('/transactions/2/Governance')"
                 v-show="showSubTransaction">Governance</span>
+          <span class="sub_btn_item" @click="featureButtonClick('/transactions/2/Service')"
+                v-show="showSubTransaction">Service</span>
         </div>
         <span class="nav_item common_item_style" :class="activeClassName === '/Proposals'?'nav_item_active':''"
               @click="featureButtonClick('/Proposals')"

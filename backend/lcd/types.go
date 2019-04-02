@@ -5,16 +5,18 @@ import (
 )
 
 const (
-	UrlAccount         = "%s/auth/accounts/%s"
-	UrlValidator       = "%s/stake/validators/%s"
-	UrlValidators      = "%s/stake/validators?page=%d&size=%d"
-	UrlNodeInfo        = "%s/node_info"
-	UrlGenesis         = "%s/genesis"
-	UrlWithdrawAddress = "%s/distribution/%s/withdrawAddress"
-	UrlBlockLatest     = "%s/blocks/latest"
-	UrlBlock           = "%s/blocks/%d"
-	UrlValidatorSet    = "%s/validatorsets/%d"
-	UrlStakePool       = "%s/stake/pool"
+	UrlAccount            = "%s/auth/accounts/%s"
+	UrlValidator          = "%s/stake/validators/%s"
+	UrlValidators         = "%s/stake/validators?page=%d&size=%d"
+	UrlNodeInfo           = "%s/node_info"
+	UrlGenesis            = "%s/genesis"
+	UrlWithdrawAddress    = "%s/distribution/%s/withdrawAddress"
+	UrlBlockLatest        = "%s/blocks/latest"
+	UrlBlock              = "%s/blocks/%d"
+	UrlValidatorSet       = "%s/validatorsets/%d"
+	UrlStakePool          = "%s/stake/pool"
+	UrlServiceDefine      = "%s/service/definition/%s/%s"
+	UrlServiceBindingList = "%s/service/bindings/%s/%s"
 )
 
 type AccountVo struct {
@@ -409,4 +411,39 @@ type StakePoolVo struct {
 	BondedTokens string `json:"bonded_tokens"`
 	TotalSupply  string `json:"total_supply"`
 	BondedRatio  string `json:"bonded_ratio"`
+}
+
+type SvcDefVo struct {
+	Definition struct {
+		Name              string      `json:"name"`
+		ChainID           string      `json:"chain_id"`
+		Description       string      `json:"description"`
+		Tags              interface{} `json:"tags"`
+		Author            string      `json:"author"`
+		AuthorDescription string      `json:"author_description"`
+		IdlContent        string      `json:"idl_content"`
+	} `json:"definition"`
+	Methods interface{} `json:"methods"`
+}
+
+type SvcBindVo struct {
+	DefName     string `json:"def_name"`
+	DefChainID  string `json:"def_chain_id"`
+	BindChainID string `json:"bind_chain_id"`
+	Provider    string `json:"provider"`
+	BindingType string `json:"binding_type"`
+	Deposit     []struct {
+		Denom  string `json:"denom"`
+		Amount string `json:"amount"`
+	} `json:"deposit"`
+	Price []struct {
+		Denom  string `json:"denom"`
+		Amount string `json:"amount"`
+	} `json:"price"`
+	Level struct {
+		AvgRspTime string `json:"avg_rsp_time"`
+		UsableTime string `json:"usable_time"`
+	} `json:"level"`
+	Available   bool      `json:"available"`
+	DisableTime time.Time `json:"disable_time"`
 }

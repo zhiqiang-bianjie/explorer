@@ -37,7 +37,7 @@ const (
 	EnvironmentStage   = "stage"
 	EnvironmentProd    = "prod"
 
-	DefaultEnvironment = EnvironmentDevelop
+	DefaultEnvironment = EnvironmentLocal
 )
 
 var (
@@ -118,7 +118,7 @@ func loadDefault() {
 		KeyDbPwd:          "irispassword",
 		KeyDbPoolLimit:    "4096",
 		KeyServerPort:     "8080",
-		KeyAddrHubLcd:     "http://35.220.142.249:1317",
+		KeyAddrHubLcd:     "http://irisnet-lcd.dev.rainbow.one",
 		KeyAddrHubNode:    "http://192.168.150.31:30657",
 		KeyAddrFaucet:     "http://192.168.150.31:4000",
 		KeyChainId:        "rainbow-dev",

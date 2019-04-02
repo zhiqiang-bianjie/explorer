@@ -108,10 +108,10 @@
       getDataList(currentPage, pageSize) {
         this.showLoading = true;
         let url=`/api/service?page=${currentPage}&size=${pageSize}`;
-        Service.http(url).then((services)=>{
-          if(services){
-            this.count = services.length;
-            this.items = services.map(item =>{
+        Service.http(url).then((result)=>{
+          if(result && result.Count){
+            this.count = result.Count;
+            this.items = result.Data.map(item =>{
               return {
                 'Hash' : item.hash,
                 'Code' : item.name,
