@@ -118,6 +118,38 @@
           <span class="information_props">Received Rewards :</span>
           <span class="information_value">{{amountValue}}</span>
         </div>
+        <div class="information_props_wrap" v-if="def_chain_id">
+          <span class="information_props">Define Chain Id :</span>
+          <span class="information_value">{{def_chain_id}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="def_name">
+          <span class="information_props">Service Name :</span>
+          <span class="information_value">{{def_name}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="bind_chain_id">
+          <span class="information_props">Binding Chain Id :</span>
+          <span class="information_value">{{bind_chain_id}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="req_chain_id">
+          <span class="information_props">Request Chain Id :</span>
+          <span class="information_value">{{req_chain_id}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="method_id">
+          <span class="information_props">Request Method Id :</span>
+          <span class="information_value">{{method_id}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="consumer">
+          <span class="information_props">Consumer :</span>
+          <span class="information_value">{{consumer}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="provider">
+          <span class="information_props">Provider :</span>
+          <span class="information_value">{{provider}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="data">
+          <span class="information_props">Data :</span>
+          <span class="information_value">{{data}}</span>
+        </div>
         <div class="information_props_wrap">
           <span class="information_props">Status :</span>
           <span class="information_value">{{status}}</span>
@@ -209,6 +241,15 @@
         flShowReceivedRewardsValue: false,
         ageValue: '',
         transactionDetailTimer: null,
+        def_chain_id: "",
+        def_name: "",
+        bind_chain_id: "",
+        req_chain_id: "",
+        method_id: "",
+        provider: "",
+        consumer: "",
+        data: "",
+        service_fee: "",
       }
     },
     watch:{
@@ -332,6 +373,21 @@
                 this.flShowReceivedRewardsValue = true;
                 this.flShowValidatorAddress = true;
                 this.validatorAddress = data.From ? data.From : "";
+              } else if(data.Type === "service_define"){
+
+              } else if(data.Type === "service_bind"){
+
+              } else if(data.Type === "service_call"){
+                this.def_chain_id = data.msg.def_chain_id;
+                this.def_name = data.msg.def_name;
+                this.bind_chain_id = data.msg.bind_chain_id;
+                this.req_chain_id = data.msg.req_chain_id;
+                this.method_id = data.msg.method_id;
+                this.provider = data.msg.provider;
+                this.consumer = data.msg.consumer;
+                this.data = data.msg.input;
+              } else if(data.Type === "service_respond"){
+                this.def_chain_id = data.msg.def_chain_id
               }
             }
 

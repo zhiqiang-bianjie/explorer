@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/irisnet/explorer/backend/model"
@@ -315,7 +316,51 @@ func (service *TxService) buildTx(tx document.CommonTx) interface{} {
 
 		return govTx
 	case types.Service:
-		return buildBaseTx(tx)
+		baseTx := buildBaseTx(tx)
+		switch tx.Type {
+		case types.TypeServiceDefine:
+			var svcDef model.SvcDef
+			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcDef); err == nil {
+				return model.ServiceTx{
+					BaseTx: baseTx,
+					Msg:    svcDef,
+				}
+			}
+		case types.TypeServiceBind:
+			var svcBind model.SvcBind
+			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcBind); err == nil {
+				return model.ServiceTx{
+					BaseTx: baseTx,
+					Msg:    svcBind,
+				}
+			}
+		case types.TypeServiceCall:
+			var svcReq model.SvcRequest
+			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcReq); err == nil {
+				decodeBytes, err := base64.StdEncoding.DecodeString(svcReq.Input)
+				if err == nil {
+					svcReq.Input = string(decodeBytes)
+				}
+				return model.ServiceTx{
+					BaseTx: baseTx,
+					Msg:    svcReq,
+				}
+			}
+		case types.TypeServiceRespond:
+			var svcResp model.SvcResponse
+			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcResp); err == nil {
+				decodeBytes, err := base64.StdEncoding.DecodeString(svcResp.Output)
+				if err == nil {
+					svcResp.Output = string(decodeBytes)
+				}
+				return model.ServiceTx{
+					BaseTx: baseTx,
+					Msg:    svcResp,
+				}
+			}
+		}
+		return baseTx
+
 	}
 	return tx
 }
@@ -332,5 +377,6 @@ func buildBaseTx(tx document.CommonTx) model.BaseTx {
 		GasPrice:    tx.GasPrice,
 		Memo:        tx.Memo,
 		Timestamp:   tx.Time,
+		From:        tx.From,
 	}
 }

@@ -71,6 +71,7 @@ type BaseTx struct {
 	GasPrice    float64
 	Memo        string
 	Timestamp   time.Time
+	From        string
 }
 
 type TransTx struct {
@@ -105,4 +106,9 @@ type GovTx struct {
 	Option       string
 	Title        string
 	ProposalType string
+}
+
+type ServiceTx struct {
+	BaseTx
+	Msg interface{} `json:"msg"`
 }

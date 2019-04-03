@@ -375,6 +375,16 @@ export default class Tools{
             Type: item.Type,
             Fee,
           }
+        }else if(txType === 'Service'){
+          if(item.Fee.amount && item.Fee.denom){
+            let feeAmount = item.Fee.amount;
+            Fee = `${Tools.formatFeeToFixedNumber(feeAmount)} ${Tools.formatDenom(item.Fee.denom).toUpperCase()}`;
+          }
+          objList = {
+            Type: item.Type,
+            Fee,
+            From: item.From === '' ? "--" :item.From,
+          }
         }
         let allObjList = Object.assign(commonHeaderObjList,objList,commonFooterObjList);
         return allObjList;

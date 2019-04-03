@@ -36,24 +36,24 @@ type Level struct {
 }
 
 type SvcRequest struct {
-	DefChainID  string         `json:"def_chain_id"`
-	DefName     string         `json:"def_name"`
-	BindChainID string         `json:"bind_chain_id"`
-	ReqChainID  string         `json:"req_chain_id"`
-	MethodID    int16          `json:"method_id"`
-	Provider    string         `json:"provider"`
-	Consumer    string         `json:"consumer"`
-	Input       []byte         `json:"input"`
-	ServiceFee  document.Coins `json:"service_fee"`
-	Profiling   bool           `json:"profiling"`
+	DefChainID  string `json:"def_chain_id"`
+	DefName     string `json:"def_name"`
+	BindChainID string `json:"bind_chain_id"`
+	ReqChainID  string `json:"req_chain_id"`
+	MethodID    int16  `json:"method_id"`
+	Provider    string `json:"provider"`
+	Consumer    string `json:"consumer"`
+	Input       string `json:"input"`
+	ServiceFee  Coins  `json:"service_fee"`
+	Profiling   bool   `json:"profiling"`
 }
 
 type SvcResponse struct {
 	ReqChainID string `json:"req_chain_id"`
 	RequestID  string `json:"request_id"`
 	Provider   string `json:"provider"`
-	Output     []byte `json:"output"`
-	ErrorMsg   []byte `json:"error_msg"`
+	Output     string `json:"output"`
+	ErrorMsg   string `json:"error_msg"`
 }
 
 type SvcTx struct {
