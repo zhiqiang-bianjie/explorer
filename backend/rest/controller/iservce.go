@@ -34,7 +34,9 @@ var iService = IService{
 
 func registerQueryServiceList(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryServiceList, "GET", func(request model.IrisReq) interface{} {
-		return iService.QueryList(1, 10)
+		page := int(utils.ParseIntWithDefault(QueryParam(request, "page"), 1))
+		size := int(utils.ParseIntWithDefault(QueryParam(request, "size"), 10))
+		return iService.QueryList(page, size)
 	})
 	return nil
 }

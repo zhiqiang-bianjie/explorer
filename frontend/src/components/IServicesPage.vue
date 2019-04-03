@@ -34,6 +34,8 @@
   import SpinComponent from './commonComponents/SpinComponent';
   import Service from "../util/axios";
   import Constant from "../constant/Constant"
+
+  const svcTable = [{"Hash":"","Code":"","Chain Id":"","Publisher Description" :"","From":"","Status":"","Description" :""}];
   export default {
     components:{
       BlocksListTable,
@@ -43,7 +45,7 @@
       currentPage(currentPage) {
         this.currentPage = currentPage;
         new Promise((resolve)=>{
-          this.getDataList(currentPage, 30);
+          this.getServiceList(currentPage, this.pageSize);
           resolve();
         }).then(()=>{
           Tools.scrollToTop()
@@ -54,7 +56,7 @@
         this.items = [];
         this.type = this.$route.params.type;
         this.currentPage = 1;
-        this.getDataList(1, 30);
+        this.getServiceList(1, this.pageSize);
         this.showNoData = false;
         this.computeMinWidth();
       }
@@ -84,7 +86,7 @@
     },
 
     mounted() {
-      this.getDataList(1, 30);
+      this.getServiceList(1, this.pageSize);
       window.addEventListener('resize',this.onresize);
     },
     beforeDestroy() {
@@ -105,7 +107,7 @@
           this.tableMinWidth = 8.8;
         }
       },
-      getDataList(currentPage, pageSize) {
+      getServiceList(currentPage, pageSize) {
         this.showLoading = true;
         let url=`/api/service?page=${currentPage}&size=${pageSize}`;
         Service.http(url).then((result)=>{
@@ -123,12 +125,12 @@
               }
             })
           }else {
-            this.items = [{"Hash":"","Code":"","Chain Id":"","Publisher Description" :"","From":"","Status":"","Description" :""}];
+            this.items = svcTable;
             this.showNoData = true;
           }
           this.showLoading = false;
         }).catch(e => {
-          this.items = [{"Hash":"", "Code":"","Chain Id":"","Publisher Description" :"","From":"","Status":"","Description" :""}];
+          this.items = svcTable;
           this.showNoData = true;
           this.showLoading = false;
         });
