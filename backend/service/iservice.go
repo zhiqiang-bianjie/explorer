@@ -4,6 +4,7 @@ import (
 	"github.com/irisnet/explorer/backend/lcd"
 	"github.com/irisnet/explorer/backend/model"
 	"github.com/irisnet/explorer/backend/orm/document"
+	"github.com/irisnet/explorer/backend/types"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -48,9 +49,9 @@ func (service *IService) Query(name, defChainId string) interface{} {
 	svcBindDoc := dbm.C(document.CollectionNmSvcBind)
 	svcInvocationDoc := dbm.C(document.CollectionNmSvcInvocation)
 
-	svcInfo.SvcBindList = service.QuerySvcBinding(name, defChainId, 1, 2, svcBindDoc)
+	svcInfo.SvcBindList = service.QuerySvcBinding(name, defChainId, 1, 10, svcBindDoc)
 
-	svcInfo.SvcTxList = service.QuerySvcInvocation(name, defChainId, 1, 2, svcInvocationDoc)
+	svcInfo.SvcTxList = service.QuerySvcInvocation(name, defChainId, 1, 10, svcInvocationDoc)
 	return svcInfo
 }
 
@@ -110,12 +111,18 @@ func (service *IService) QuerySvcInvocation(name, defChainId string, page, size 
 
 	if result.Count > 0 {
 		for _, invocation := range invocationList {
+			sendAddr := invocation.Consumer
+			receiveAddr := invocation.Provider
+			if invocation.TxType == types.TypeServiceRespond {
+				sendAddr = invocation.Provider
+				receiveAddr = invocation.Consumer
+			}
 			svcTxList = append(svcTxList, model.SvcTx{
 				Hash:        invocation.Hash,
 				ReqId:       invocation.ReqId,
 				TxType:      invocation.TxType,
-				SendAddr:    invocation.Consumer,
-				ReceiveAddr: invocation.Provider,
+				SendAddr:    sendAddr,
+				ReceiveAddr: receiveAddr,
 				Height:      invocation.Height,
 				Data:        invocation.Data,
 				Time:        invocation.Time,

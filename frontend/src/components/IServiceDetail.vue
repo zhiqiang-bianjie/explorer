@@ -43,12 +43,12 @@
     <div :class="proposalsDetailWrap">
       <div class="proposals_detail_table_wrap">
         <spin-component :showLoading="showLoading"/>
-        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcBindPage" :per-page="pageSize"></b-pagination>
+        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcCurrentPage" :per-page="pageSize"></b-pagination>
         <blocks-list-table :items="bondRecord" :type="'ServiceBind'" :showNoData="showNoData" :min-width="tableMinWidth"></blocks-list-table>
         <div v-show="showNoData" class="no_data_show">
           No Data
         </div>
-        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcBindPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
+        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcCurrentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
       </div>
     </div>
 
@@ -84,22 +84,14 @@
       SpinComponent
     },
     watch: {
-      svcBindPage(current) {
-        debugger;
-        this.svcCurrentPage = current;
-        this.$router.push({
-          path: this.$route.path,
-          query:{
-            pagenum: this.svcCurrentPage
-          }
-        });
-        new Promise((resolve)=>{
-          this.getSvcBinding(current, this.pageSize);
-          resolve();
-        }).then(()=>{
-          document.body.scrollTop = 0;
-        })
+      svcCurrentPage(svcCurrentPage) {
+        this.svcCurrentPage = svcCurrentPage;
+        this.getSvcBinding(svcCurrentPage, this.pageSize);
       },
+      currentPage(currentPage){
+        this.currentPage = currentPage;
+        this.getSvcInvocation(currentPage, this.pageSize);
+      }
     },
     data() {
       return {
@@ -109,7 +101,8 @@
         invocationRecord: [],
         showLoading:false,
         showNoData: false,
-        svcCurrentPage: "",
+        svcCurrentPage: 1,
+        currentPage:1,
         svcBindCnt: "",
         svcTxCnt: "",
         chainId: "",
@@ -118,12 +111,12 @@
         author: "",
         authorDescription: "",
         tableMinWidth: "",
-        textareaRows: '10',
+        textareaRows: '4',
         iDLContent: '',
         parameterValue: '',
         svcName: '',
         defChainId: '',
-        pageSize: 2
+        pageSize: 10
       }
     },
     beforeMount() {
@@ -149,41 +142,20 @@
             this.name = data.name;
             this.author = data.author;
             this.iDLContent = data.idl_content;
+            //this.textareaRows = data.idl_content.split('\n').length-1;
             this.chainId = data.chain_id;
             this.authorDescription = data.author_description;
             this.description = data.description;
             this.svcBindCnt = data.svc_bind_list.Count;
-            this.bondRecord = data.svc_bind_list.Data.map(item =>{
-              return {
-                'Hash' : item.hash,
-                'Binding Chain Id' : item.bind_chain_id,
-                'From' : item.provider,
-                'Binding Type' : item.binding_type.toUpperCase(),
-                'Prices' : Tools.formatMoney(item.price),
-                'AvgRspTime' : item.level.avg_rsp_time / 1000 + "s",
-                'UsableTime' : item.level.usable_time,
-                'Status' : item.available,
-              }
-            });
-
+            this.bondRecord = this.formatSvcBindingData(data.svc_bind_list.Data);
             this.svcTxCnt = data.svc_tx_list.Count;
-            this.invocationRecord = data.svc_tx_list.Data.map(item =>{
-              return {
-                'Hash' : item.hash,
-                'Request ID' : item.req_id,
-                'Tx Type' : item.tx_type.toUpperCase(),
-                'From': item.send_addr,
-                'To': item.receive_addr,
-                'Height': item.height,
-                'Time': item.time,
-              }
-            });
+            this.invocationRecord = this.formatSvcTxData(data.svc_tx_list.Data);
           }else {
-              this.showNoData = false;
-              this.bondRecord = bondRecordTitle;
-              this.invocationRecord = invocationRecordTitle;
-              this.showNoData = true
-            }
+            this.showNoData = false;
+            this.bondRecord = bondRecordTitle;
+            this.invocationRecord = invocationRecordTitle;
+            this.showNoData = true
+          }
         }).catch(e => {
           this.bondRecord = bondRecordTitle;
           this.invocationRecord = invocationRecordTitle;
@@ -192,32 +164,64 @@
         })
 
       },
-      getSvcBinding(){
-        debugger;
-        let url = `/api/service/binding/${this.svcName}/${this.defChainId}`;
+      getSvcBinding(current, pageSize){
+        let url = `/api/service/binding/${this.svcName}/${this.defChainId}?page=${current}&size=${pageSize}`;
         Service.http(url).then((response) => {
-          this.showLoading = false;
+          this.showLoading = true;
           if(response || response.Count > 0){
-            let data = response.Data;
-            this.bondRecord = data.map(item =>{
-              return {
-                'Hash' : item.hash,
-                'Binding Chain Id' : item.bind_chain_id,
-                'From' : item.provider,
-                'Binding Type' : item.binding_type.toUpperCase(),
-                'Prices' : Tools.formatMoney(item.price),
-                'AvgRspTime' : item.level.avg_rsp_time / 1000 + "s",
-                'UsableTime' : item.level.usable_time,
-                'Status' : item.available,
-              }
-            });
+            this.bondRecord = this.formatSvcBindingData(response.Data);
+          }
+          this.showLoading = false;
+        }).catch(e => {
+          this.bondRecord = bondRecordTitle;
+          this.showLoading = false;
+          this.showNoData = true
+        })
+      },
+      getSvcInvocation(current, pageSize){
+        let url = `/api/service/invocation/${this.svcName}/${this.defChainId}?page=${current}&size=${pageSize}`;
+        Service.http(url).then((response) => {
+          this.showLoading = true;
+          if(response || response.Count > 0){
+            this.invocationRecord = this.formatSvcTxData(response.Data);
+          }
+          this.showLoading = false;
+        }).catch(e => {
+          this.bondRecord = bondRecordTitle;
+          this.showLoading = false;
+          this.showNoData = true
+        })
+      },
+      formatSvcBindingData(data){
+        return data.map(item =>{
+          return {
+            'Hash' : item.hash,
+            'Binding Chain Id' : item.bind_chain_id,
+            'From' : item.provider,
+            'Binding Type' : item.binding_type.toUpperCase(),
+            'Prices' : Tools.formatMoney(item.price),
+            'AvgRspTime' : item.level.avg_rsp_time / 1000 + "s",
+            'UsableTime' : item.level.usable_time,
+            'Status' : item.available,
+          }
+        })
+      },
+      formatSvcTxData(data){
+        return data.map(item =>{
+          return {
+            'Hash' : item.hash,
+            'Request ID' : item.req_id,
+            'Tx Type' : item.tx_type.toUpperCase(),
+            'From': item.send_addr,
+            'To': item.receive_addr,
+            'Height': item.height,
+            'Time': item.time,
           }
         })
       },
       jumpRoute(path) {
         this.$router.push(path);
       }
-
     }
   }
 </script>
@@ -228,195 +232,195 @@
   .proposals_detail_wrap {
     @include flex;
     @include pcContainer;
-      font-size: 0.14rem;
+    font-size: 0.14rem;
     .proposals_title_wrap {
       width: 100%;
       //border-bottom: 1px solid #d6d9e0;
-    @include flex;
-    @include pcContainer;
-    .personal_computer_transactions_detail_wrap {
       @include flex;
-    }
-  .mobile_transactions_detail_wrap {
-    @include flex;
-    flex-direction: column;
-    .proposals_detail_information_wrap{
-      .parameter_container{
-        .information_props_wrap{
-          .parameter_detail_content{
-            width: 90%;
-            margin-right:20%;
-            background: #EEE;
+      @include pcContainer;
+      .personal_computer_transactions_detail_wrap {
+        @include flex;
+      }
+      .mobile_transactions_detail_wrap {
+        @include flex;
+        flex-direction: column;
+        .proposals_detail_information_wrap{
+          .parameter_container{
+            .information_props_wrap{
+              .parameter_detail_content{
+                width: 90%;
+                margin-right:20%;
+                background: #EEE;
+              }
+            }
           }
         }
       }
     }
-    }
-  }
-  .personal_computer_transactions_detail_wrap {
-    width: 100%!important;
-    .proposals_information_content_title {
-      padding-left: 0.2rem !important;
-      height: 0.5rem !important;
-      line-height: 0.5rem !important;
-      font-size: 0.18rem !important;
-      color: #000000;
-      margin-bottom: 0;
-      @include fontWeight;
-      border-bottom:1px solid #d6d9e0 !important;
-    }
-    @include pcCenter;
+    .personal_computer_transactions_detail_wrap {
+      width: 100%!important;
+      .proposals_information_content_title {
+        padding-left: 0.2rem !important;
+        height: 0.5rem !important;
+        line-height: 0.5rem !important;
+        font-size: 0.18rem !important;
+        color: #000000;
+        margin-bottom: 0;
+        @include fontWeight;
+        border-bottom:1px solid #d6d9e0 !important;
+      }
+      @include pcCenter;
       .proposals_detail_information_wrap {
         margin-top: 0.21rem;
         margin-left: 0.2rem;
-      .information_props_wrap {
-        @include flex;
-        margin-bottom:0.08rem;
-    .information_props {
-      min-width: 1.5rem;
-    }
-    .flag_item_left {
-      display: inline-block;
-      width: 0.2rem;
-      height: 0.17rem;
-      background: url('../assets/left.png') no-repeat 0 1px;
-      margin-right: 0.05rem;
-      cursor: pointer;
-    }
-    .flag_item_left_disabled {
-      display: inline-block;
-      width: 0.2rem;
-      height: 0.17rem;
-      margin-right: 0.05rem;
-      cursor: pointer;
-      background: url('../assets/left_disabled.png') no-repeat 0 1px;
-    }
-    .flag_item_right {
-      display: inline-block;
-      width: 0.2rem;
-      height: 0.17rem;
-      background: url('../assets/right.png') no-repeat 0 0;
-      margin-left: 0.05rem;
-      cursor: pointer;
-    }
-    .flag_item_right_disabled {
-      display: inline-block;
-      width: 0.2rem;
-      height: 0.17rem;
-      background: url('../assets/right_disabled.png') no-repeat 0 0;
-      margin-left: 0.05rem;
-      cursor: pointer;
+        .information_props_wrap {
+          @include flex;
+          margin-bottom:0.08rem;
+          .information_props {
+            min-width: 1.5rem;
+          }
+          .flag_item_left {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            background: url('../assets/left.png') no-repeat 0 1px;
+            margin-right: 0.05rem;
+            cursor: pointer;
+          }
+          .flag_item_left_disabled {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            margin-right: 0.05rem;
+            cursor: pointer;
+            background: url('../assets/left_disabled.png') no-repeat 0 1px;
+          }
+          .flag_item_right {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            background: url('../assets/right.png') no-repeat 0 0;
+            margin-left: 0.05rem;
+            cursor: pointer;
+          }
+          .flag_item_right_disabled {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            background: url('../assets/right_disabled.png') no-repeat 0 0;
+            margin-left: 0.05rem;
+            cursor: pointer;
+          }
+        }
       }
-    }
-  }
-  .proposals_detail_table_wrap {
-    margin-bottom: 0.2rem;
-    width: 100%;
-    overflow-x: auto;
-    .no_data_show {
-      @include flex;
-        justify-content: center;
-        border-top: 0.01rem solid #eee;
-        border-bottom: 0.01rem solid #eee;
-        font-size: 0.14rem;
-        height: 0.5rem;
-        align-items: center;
+      .proposals_detail_table_wrap {
+        margin-bottom: 0.2rem;
+        width: 100%;
+        overflow-x: auto;
+        .no_data_show {
+          @include flex;
+          justify-content: center;
+          border-top: 0.01rem solid #eee;
+          border-bottom: 0.01rem solid #eee;
+          font-size: 0.14rem;
+          height: 0.5rem;
+          align-items: center;
+        }
+      }
+
+      .proposals_detail_title {
+        height: 0.61rem;
+        line-height: 0.61rem;
+        font-size: 0.22rem;
+        color: #000000;
+        margin-right: 0.2rem;
+        @include fontWeight;
+        margin-left: 0.2rem;
+      }
+      .proposals_detail_wrap_hash_var {
+        height: 0.61rem;
+        line-height: 0.61rem;
+        font-size: 0.22rem;
+        color: #a2a2ae;
       }
     }
 
-    .proposals_detail_title {
-      height: 0.61rem;
-      line-height: 0.61rem;
-      font-size: 0.22rem;
-      color: #000000;
-      margin-right: 0.2rem;
-      @include fontWeight;
-      margin-left: 0.2rem;
-    }
-    .proposals_detail_wrap_hash_var {
-      height: 0.61rem;
-      line-height: 0.61rem;
-      font-size: 0.22rem;
-      color: #a2a2ae;
-    }
-  }
-
-  .mobile_transactions_detail_wrap {
-    width: 100%;
-    @include flex;
-    flex-direction: column;
-    padding-left: 0.1rem;
-    .proposals_detail_wrap_hash_var{
-      color: #a2a2ae;
-    }
-    .proposals_information_content_title {
-      height: 0.5rem !important;
-      line-height: 0.5rem !important;
-      font-size: 0.18rem !important;
-      color: #000000;
-      margin-bottom: 0;
-      @include fontWeight;
-      border-bottom: 1px solid #d6d9e0 !important;
-    }
-    .proposals_detail_table_wrap {
+    .mobile_transactions_detail_wrap {
       width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling:touch;
-      margin-bottom:0.4rem;
-    .no_data_show {
       @include flex;
-        justify-content: center;
-        border-top: 0.01rem solid #eee;
-        border-bottom: 0.01rem solid #eee;
-        font-size: 0.14rem;
-        height: 3rem;
-        align-items: center;
+      flex-direction: column;
+      padding-left: 0.1rem;
+      .proposals_detail_wrap_hash_var{
+        color: #a2a2ae;
       }
-    }
-    .proposals_detail_information_wrap {
+      .proposals_information_content_title {
+        height: 0.5rem !important;
+        line-height: 0.5rem !important;
+        font-size: 0.18rem !important;
+        color: #000000;
+        margin-bottom: 0;
+        @include fontWeight;
+        border-bottom: 1px solid #d6d9e0 !important;
+      }
+      .proposals_detail_table_wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling:touch;
+        margin-bottom:0.4rem;
+        .no_data_show {
+          @include flex;
+          justify-content: center;
+          border-top: 0.01rem solid #eee;
+          border-bottom: 0.01rem solid #eee;
+          font-size: 0.14rem;
+          height: 3rem;
+          align-items: center;
+        }
+      }
+      .proposals_detail_information_wrap {
 
-      .information_props_wrap {
-        @include flex;
+        .information_props_wrap {
+          @include flex;
           flex-direction: column;
           margin-bottom: 0.05rem;
-        .information_value {
-          overflow-x: auto;
-          -webkit-overflow-scrolling:touch;
-        }
-        .flag_item_left {
-          display: inline-block;
-          width: 0.2rem;
-          height: 0.17rem;
-          background: url('../assets/left.png') no-repeat 0 1px;
-          margin-right: 0.05rem;
-          cursor: pointer;
-        }
-        .flag_item_left_disabled {
-          display: inline-block;
-          width: 0.2rem;
-          height: 0.17rem;
-          margin-right: 0.05rem;
-          cursor: pointer;
-          background: url('../assets/left_disabled.png') no-repeat 0 1px;
-        }
-        .flag_item_right {
-          display: inline-block;
-          width: 0.2rem;
-          height: 0.17rem;
-          background: url('../assets/right.png') no-repeat 0 0;
-          margin-left: 0.05rem;
-          cursor: pointer;
-        }
-        .flag_item_right_disabled {
-          display: inline-block;
-          width: 0.2rem;
-          height: 0.17rem;
-          background: url('../assets/right_disabled.png') no-repeat 0 0;
-          margin-left: 0.05rem;
-          cursor: pointer;
+          .information_value {
+            overflow-x: auto;
+            -webkit-overflow-scrolling:touch;
+          }
+          .flag_item_left {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            background: url('../assets/left.png') no-repeat 0 1px;
+            margin-right: 0.05rem;
+            cursor: pointer;
+          }
+          .flag_item_left_disabled {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            margin-right: 0.05rem;
+            cursor: pointer;
+            background: url('../assets/left_disabled.png') no-repeat 0 1px;
+          }
+          .flag_item_right {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            background: url('../assets/right.png') no-repeat 0 0;
+            margin-left: 0.05rem;
+            cursor: pointer;
+          }
+          .flag_item_right_disabled {
+            display: inline-block;
+            width: 0.2rem;
+            height: 0.17rem;
+            background: url('../assets/right_disabled.png') no-repeat 0 0;
+            margin-left: 0.05rem;
+            cursor: pointer;
+          }
         }
       }
-    }
       .proposals_detail_title {
         height: 0.3rem;
         line-height: 0.3rem;

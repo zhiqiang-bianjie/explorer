@@ -61,8 +61,10 @@ const (
 	UrlRegisterQueryTx           = "/tx/{hash}"
 
 	//IService
-	UrlRegisterQueryServiceList = "/service"
-	UrlRegisterQueryService     = "/service/{svcName}/{defChainId}"
+	UrlRegisterQueryServiceList   = "/service"
+	UrlRegisterQueryService       = "/service/{svcName}/{defChainId}"
+	UrlRegisterQuerySvcBinding    = "/service/binding/{svcName}/{defChainId}"
+	UrlRegisterQuerySvcInvocation = "/service/invocation/{svcName}/{defChainId}"
 
 	//version
 	UrlRegisterQueryApiVersion = "/version"
