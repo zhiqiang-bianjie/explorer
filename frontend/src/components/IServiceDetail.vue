@@ -187,12 +187,15 @@
           }
           this.showLoading = false;
         }).catch(e => {
-          this.bondRecord = bondRecordTitle;
+          this.invocationRecord = invocationRecordTitle;
           this.showLoading = false;
           this.showNoData = true
         })
       },
       formatSvcBindingData(data){
+        if(!data){
+          return bondRecordTitle;
+        }
         return data.map(item =>{
           return {
             'Hash' : item.hash,
@@ -207,11 +210,14 @@
         })
       },
       formatSvcTxData(data){
-        return data.map(item =>{
+        if(!data){
+          return invocationRecordTitle;
+        }
+        return data.map(item => {
           return {
-            'Hash' : item.hash,
-            'Request ID' : item.req_id,
-            'Tx Type' : item.tx_type.toUpperCase(),
+            'Hash': item.hash,
+            'Request ID': item.req_id,
+            'Tx Type': item.tx_type.toUpperCase(),
             'From': item.send_addr,
             'To': item.receive_addr,
             'Height': item.height,

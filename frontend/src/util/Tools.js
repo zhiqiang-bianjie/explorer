@@ -449,7 +449,7 @@ export default class Tools{
         amount = Tools.formatNumber(item.amount);
         denom = "IRIS"
       }
-      return `${amount}${denom.toUpperCase()}`
+      return `${amount} ${denom.toUpperCase()}`
     };
     if(money instanceof Array){
       let moneyStr = '';

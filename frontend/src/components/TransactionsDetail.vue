@@ -150,6 +150,50 @@
           <span class="information_props">Data :</span>
           <span class="information_value">{{data}}</span>
         </div>
+        <div class="information_props_wrap" v-if="author">
+          <span class="information_props">Author :</span>
+          <span class="information_value">{{author}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="author_description">
+          <span class="information_props">Author Description :</span>
+          <span class="information_value">{{author_description}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="idl_content">
+          <span class="information_props">Idl Content :</span>
+          <textarea :rows="textareaRows" readonly spellcheck="false" class="parameter_detail_content">{{idl_content}}
+            </textarea>
+        </div>
+        <div class="information_props_wrap" v-if="service_fee">
+          <span class="information_props">Service Fee :</span>
+          <span class="information_value">{{service_fee}}</span>
+        </div>
+        <!-- service bind-->
+        <div class="information_props_wrap" v-if="binding_type">
+          <span class="information_props">Service Binding Type :</span>
+          <span class="information_value">{{binding_type}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="svc_deposit">
+          <span class="information_props">Service Deposit :</span>
+          <span class="information_value">{{svc_deposit}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="svc_prices">
+          <span class="information_props">Service Prices :</span>
+          <span class="information_value">{{svc_prices}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="avg_rsp_time">
+          <span class="information_props">Avg Response Time :</span>
+          <span class="information_value">{{avg_rsp_time}}</span>
+        </div>
+        <!-- service response-->
+        <div class="information_props_wrap" v-if="request_id">
+          <span class="information_props">Request Id :</span>
+          <span class="information_value">{{request_id}}</span>
+        </div>
+        <div class="information_props_wrap" v-if="error_msg">
+          <span class="information_props">Error Msg :</span>
+          <span class="information_value">{{error_msg}}</span>
+        </div>
+
         <div class="information_props_wrap">
           <span class="information_props">Status :</span>
           <span class="information_value">{{status}}</span>
@@ -250,6 +294,17 @@
         consumer: "",
         data: "",
         service_fee: "",
+        author: "",
+        author_description: "",
+        idl_content: "",
+        binding_type: "",
+        svc_deposit: "",
+        svc_prices: "",
+        avg_rsp_time: "",
+        usable_time: "",
+        request_id: "",
+        error_msg: "",
+        textareaRows: 5,
       }
     },
     watch:{
@@ -374,9 +429,24 @@
                 this.flShowValidatorAddress = true;
                 this.validatorAddress = data.From ? data.From : "";
               } else if(data.Type === "service_define"){
-
+                this.def_name = data.msg.name;
+                this.def_chain_id = data.msg.chain_id;
+                this.description = data.msg.description;
+                this.author = data.msg.author;
+                this.author_description = data.msg.author_description;
+                this.idl_content = data.msg.idl_content;
+                this.textareaRows = data.msg.idl_content.split('\n').length;
               } else if(data.Type === "service_bind"){
-
+                this.def_chain_id = data.msg.def_chain_id;
+                this.def_name = data.msg.def_name;
+                this.bind_chain_id = data.msg.bind_chain_id;
+                this.provider = data.msg.provider;
+                this.consumer = data.msg.consumer;
+                this.binding_type = data.msg.binding_type;
+                this.svc_deposit = Tools.formatMoney(data.msg.deposit);
+                this.svc_prices = Tools.formatMoney(data.msg.price);
+                this.avg_rsp_time = data.msg.level.avg_rsp_time / 1000 +'s';
+                this.usable_time = data.msg.level.usable_time;
               } else if(data.Type === "service_call"){
                 this.def_chain_id = data.msg.def_chain_id;
                 this.def_name = data.msg.def_name;
@@ -386,8 +456,13 @@
                 this.provider = data.msg.provider;
                 this.consumer = data.msg.consumer;
                 this.data = data.msg.input;
+                this.service_fee = Tools.formatMoney(data.msg.service_fee);
               } else if(data.Type === "service_respond"){
-                this.def_chain_id = data.msg.def_chain_id
+                this.req_chain_id = data.msg.req_chain_id;
+                this.request_id = data.msg.request_id;
+                this.provider = data.msg.provider;
+                this.data = data.msg.output;
+                this.error_msg = data.msg.error_msg;
               }
             }
 
@@ -516,5 +591,12 @@ padding:0.16rem 0rem;
   .link_active_style{
     color:#3598db !important;
     cursor:pointer;
+  }
+  .parameter_detail_content{
+    box-sizing: border-box;
+    padding: 0.1rem;
+    width: 97%;
+    margin-right:20%;
+    background: #EEE !important;
   }
 </style>

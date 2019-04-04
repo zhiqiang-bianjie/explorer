@@ -319,15 +319,15 @@ func (service *TxService) buildTx(tx document.CommonTx) interface{} {
 		baseTx := buildBaseTx(tx)
 		switch tx.Type {
 		case types.TypeServiceDefine:
-			var svcDef model.SvcDef
+			var svcDef model.MsgSvcDef
 			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcDef); err == nil {
 				return model.ServiceTx{
 					BaseTx: baseTx,
-					Msg:    svcDef,
+					Msg:    svcDef.SvcDef,
 				}
 			}
 		case types.TypeServiceBind:
-			var svcBind model.SvcBind
+			var svcBind model.MsgSvcBind
 			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcBind); err == nil {
 				return model.ServiceTx{
 					BaseTx: baseTx,
@@ -335,7 +335,7 @@ func (service *TxService) buildTx(tx document.CommonTx) interface{} {
 				}
 			}
 		case types.TypeServiceCall:
-			var svcReq model.SvcRequest
+			var svcReq model.MsgSvcRequest
 			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcReq); err == nil {
 				decodeBytes, err := base64.StdEncoding.DecodeString(svcReq.Input)
 				if err == nil {
@@ -347,7 +347,7 @@ func (service *TxService) buildTx(tx document.CommonTx) interface{} {
 				}
 			}
 		case types.TypeServiceRespond:
-			var svcResp model.SvcResponse
+			var svcResp model.MsgSvcResponse
 			if err := model.UnMarshalJSON([]byte(tx.MsgContent), &svcResp); err == nil {
 				decodeBytes, err := base64.StdEncoding.DecodeString(svcResp.Output)
 				if err == nil {

@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"github.com/pkg/errors"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"time"
@@ -50,6 +51,9 @@ type AminoMsg struct {
 }
 
 func UnMarshalJSON(bz []byte, target interface{}) error {
+	if len(bz) == 0 {
+		return errors.New("UnMarshalJSON empty data")
+	}
 	var msg = AminoMsg{
 		Value: target,
 	}
