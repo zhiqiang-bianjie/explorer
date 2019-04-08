@@ -124,7 +124,7 @@
         </div>
         <div class="information_props_wrap" v-if="def_name">
           <span class="information_props">Service Code :</span>
-          <span class="information_value">{{def_name}}</span>
+          <span class="information_value link_active_style" @click="skipRoute(`/Service/${def_name}/${def_chain_id}`)">{{def_name}}</span>
         </div>
         <div class="information_props_wrap" v-if="bind_chain_id">
           <span class="information_props">Binding Chain Id :</span>

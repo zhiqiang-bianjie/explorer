@@ -39,23 +39,9 @@
         <span class="nav_item common_item_style" :class="activeClassName === '/home'?'nav_item_active':''"
               @click="featureButtonClick('/home')"
         >Home</span>
-        <div class="nav_item sub_btn_wrap common_item_style" :class="activeClassName === '/validators'?'nav_item_active':''"
-             @mouseover="validatorsMouseOver" @mouseleave="validatorsMouseLeave">
-          <span class="nav_item common_item_style">
-            Validators
-            <span class="bottom_arrow"></span>
-          </span>
-          <span class="sub_btn_item validators_btn_item" @click="featureButtonClick('/validators/3/active')"
-                v-show="showSubValidators">Active</span>
-          <span class="sub_btn_item validators_btn_item" @click="featureButtonClick('/validators/3/jailed')"
-                v-show="showSubValidators">Jailed</span>
-          <span class="sub_btn_item validators_btn_item" @click="featureButtonClick('/validators/3/candidates')"
-                v-show="showSubValidators">Candidates</span>
-
-        </div>
-        <span class="nav_item common_item_style" :class="activeClassName === '/block'?'nav_item_active':''"
-              @click="featureButtonClick('/block/1/0')"
-        >Blocks</span>
+        <span class="nav_item common_item_style" :class="activeClassName === '/Services'?'nav_item_active':''"
+              @click="featureButtonClick('/Services')"
+        >Services</span>
         <div class="nav_item sub_btn_wrap common_item_style" :class="activeClassName === '/transaction'?'nav_item_active':''"
              @mouseover="transactionMouseOver" @mouseleave="transactionMouseLeave">
 
@@ -74,12 +60,22 @@
           <span class="sub_btn_item" @click="featureButtonClick('/transactions/2/Service')"
                 v-show="showSubTransaction">Service</span>
         </div>
-        <span class="nav_item common_item_style" :class="activeClassName === '/Proposals'?'nav_item_active':''"
-              @click="featureButtonClick('/Proposals')"
-        >Proposals</span>
-        <span class="nav_item common_item_style" :class="activeClassName === '/Services'?'nav_item_active':''"
-              @click="featureButtonClick('/Services')"
-        >Services</span>
+        <span class="nav_item common_item_style" :class="activeClassName === '/block'?'nav_item_active':''"
+              @click="featureButtonClick('/block/1/0')"
+        >Blocks</span>
+        <div class="nav_item sub_btn_wrap common_item_style" :class="activeClassName === '/validators'?'nav_item_active':''"
+             @mouseover="validatorsMouseOver" @mouseleave="validatorsMouseLeave">
+          <span class="nav_item common_item_style">
+            Validators
+            <span class="bottom_arrow"></span>
+          </span>
+          <span class="sub_btn_item validators_btn_item" @click="featureButtonClick('/validators/3/active')"
+                v-show="showSubValidators">Active</span>
+          <span class="sub_btn_item validators_btn_item" @click="featureButtonClick('/validators/3/jailed')"
+                v-show="showSubValidators">Jailed</span>
+          <span class="sub_btn_item validators_btn_item" @click="featureButtonClick('/validators/3/candidates')"
+                v-show="showSubValidators">Candidates</span>
+        </div>
         <span v-if="flShowFaucet" class="nav_item common_item_style faucet_content" :class="activeClassName === '/faucet'?'nav_item_active':''"
               @click="featureButtonClick('/faucet')"
         >Faucet</span>
@@ -109,19 +105,9 @@
       </div>
       <div class="use_feature_mobile" :style="{'top':absoluteTop}" v-show="featureShow">
         <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/home')">Home</span>
-        <span class="feature_btn_mobile feature_nav select_option_container" @click="validatorsSelect(flShowValidatorsSelect)">
-         <span>Validators</span>
-          <div :class="flShowValidatorsUpOrDown ? 'upImg_content' : 'downImg_content'">
-            <img :src="flShowValidatorsUpOrDown ? upImg : downImg ">
-          </div>
-        </span>
-        <div class="select_option" v-show="flShowValidatorsSelect">
-          <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/validators/3/active')">Active</span>
-          <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/validators/3/jailed')">Jailed</span>
-          <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/validators/3/candidates')">Candidates</span>
-        </div>
-
-        <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/block/1/0')">Blocks</span>
+        <span class="feature_btn_mobile feature_nav" :class="activeClassName === '/Services'?'nav_item_active':''"
+              @click="featureButtonClick('/Services')"
+        >Services</span>
         <span class="feature_btn_mobile feature_nav select_option_container" @click="transactionsSelect(flShowTransactionsSelect)">
          <span>Transactions</span>
           <div :class="flShowUpOrDown ? 'upImg_content' : 'downImg_content'">
@@ -139,8 +125,19 @@
           <span class="feature_btn_mobile feature_nav"
                 @click="featureButtonClick('/transactions/2/Governance')">Governance</span>
         </div>
+        <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/block/1/0')">Blocks</span>
+        <span class="feature_btn_mobile feature_nav select_option_container" @click="validatorsSelect(flShowValidatorsSelect)">
+         <span>Validators</span>
+          <div :class="flShowValidatorsUpOrDown ? 'upImg_content' : 'downImg_content'">
+            <img :src="flShowValidatorsUpOrDown ? upImg : downImg ">
+          </div>
+        </span>
+        <div class="select_option" v-show="flShowValidatorsSelect">
+          <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/validators/3/active')">Active</span>
+          <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/validators/3/jailed')">Jailed</span>
+          <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/validators/3/candidates')">Candidates</span>
+        </div>
 
-        <span class="feature_btn_mobile feature_nav" @click="featureButtonClick('/Proposals')">Proposals</span>
         <span v-if="flShowFaucet" class="feature_btn_mobile feature_nav mobile_faucet_content" @click="featureButtonClick('/faucet')">Faucet</span>
 
         <span class="feature_btn_mobile feature_nav select_option_container" @click="netWorkSelect(flShowNetworkSelect)">
