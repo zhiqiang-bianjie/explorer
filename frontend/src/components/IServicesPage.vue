@@ -120,7 +120,7 @@
                 'Chain Id' : item.chain_id,
                 'Publisher' : item.author_description,
                 'From' : item.author,
-                'Status' : item.status,
+                'Status' : item.status.toUpperCase(),
                 'Description' : item.description,
               }
             })

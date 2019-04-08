@@ -123,7 +123,7 @@
           <span class="information_value">{{def_chain_id}}</span>
         </div>
         <div class="information_props_wrap" v-if="def_name">
-          <span class="information_props">Service Name :</span>
+          <span class="information_props">Service Code :</span>
           <span class="information_value">{{def_name}}</span>
         </div>
         <div class="information_props_wrap" v-if="bind_chain_id">
@@ -148,7 +148,8 @@
         </div>
         <div class="information_props_wrap" v-if="data">
           <span class="information_props">Data :</span>
-          <span class="information_value">{{data}}</span>
+          <textarea :rows="textareaRows" readonly spellcheck="false" class="parameter_detail_content">{{data}}
+            </textarea>
         </div>
         <div class="information_props_wrap" v-if="author">
           <span class="information_props">Author :</span>

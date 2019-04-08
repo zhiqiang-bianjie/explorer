@@ -7,7 +7,7 @@
       </p>
     </div>
     <div :class="proposalsDetailWrap">
-      <p class="proposals_information_content_title">Service Definition Information</p>
+      <p class="proposals_information_content_title">Service Definition</p>
       <div class="proposals_detail_information_wrap">
         <div class="information_props_wrap">
           <span class="information_props">From :</span>
@@ -38,17 +38,16 @@
       </div>
     </div>
     <div :class="proposalsDetailWrap">
-      <p class="proposals_information_content_title" style='border-bottom:none !important;'>Service Binding Detail</p>
+      <p class="proposals_information_content_title" style='border-bottom:none !important;'>Service Bindings</p>
     </div>
     <div :class="proposalsDetailWrap">
       <div class="proposals_detail_table_wrap">
         <spin-component :showLoading="showLoading"/>
-        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcCurrentPage" :per-page="pageSize"></b-pagination>
         <blocks-list-table :items="bondRecord" :type="'ServiceBind'" :showNoData="showNoData" :min-width="tableMinWidth"></blocks-list-table>
         <div v-show="showNoData" class="no_data_show">
           No Data
         </div>
-        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcCurrentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
+        <b-pagination size="md" :total-rows="svcBindCnt" v-model="svcCurrentPage" :per-page="svcBindPageSize" style="margin-top: 0.5em"></b-pagination>
       </div>
     </div>
 
@@ -58,12 +57,11 @@
     <div :class="proposalsDetailWrap">
       <div class="proposals_detail_table_wrap">
         <spin-component :showLoading="showLoading"/>
-        <b-pagination size="md" :total-rows="svcTxCnt" v-model="currentPage" :per-page="pageSize"></b-pagination>
         <blocks-list-table :items="invocationRecord" :type="'ServiceInvocation'" :showNoData="showNoData" :min-width="tableMinWidth"></blocks-list-table>
         <div v-show="showNoData" class="no_data_show">
           No Data
         </div>
-        <b-pagination size="md" :total-rows="svcTxCnt" v-model="currentPage" :per-page="pageSize" style='margin:0.1rem 0;'></b-pagination>
+        <b-pagination size="md" :total-rows="svcTxCnt" v-model="currentPage" :per-page="svcTxPageSize" style="margin-top: 0.5em"></b-pagination>
       </div>
     </div>
 
@@ -86,11 +84,11 @@
     watch: {
       svcCurrentPage(svcCurrentPage) {
         this.svcCurrentPage = svcCurrentPage;
-        this.getSvcBinding(svcCurrentPage, this.pageSize);
+        this.getSvcBinding(svcCurrentPage, this.svcBindPageSize);
       },
       currentPage(currentPage){
         this.currentPage = currentPage;
-        this.getSvcInvocation(currentPage, this.pageSize);
+        this.getSvcInvocation(currentPage, this.svcTxPageSize);
       }
     },
     data() {
@@ -116,7 +114,8 @@
         parameterValue: '',
         svcName: '',
         defChainId: '',
-        pageSize: 10
+        svcBindPageSize: 3,
+        svcTxPageSize: 4
       }
     },
     beforeMount() {
@@ -193,6 +192,7 @@
         })
       },
       formatSvcBindingData(data){
+        debugger;
         if(!data){
           return bondRecordTitle;
         }

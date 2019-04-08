@@ -154,7 +154,7 @@
       </template>
       <template slot='Status' slot-scope='data'>
          <span>
-          <pre :style="data.item['Status'] ? 'color:green;':'color:red;'">{{data.item['Status'] ? 'ENABLE':'DISABLE'}}</pre>
+          <pre :style="data.item['Status'] ? 'color:green;':'color:red;'">{{data.item['Status'] == '' ? '' : (data.item['Status'] ? 'ENABLE' : 'DISABLE')}}</pre>
         </span>
       </template>
     </b-table>
