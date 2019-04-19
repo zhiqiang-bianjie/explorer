@@ -16,7 +16,7 @@ type CommonService struct {
 }
 
 func (service *CommonService) GetModule() Module {
-	return Common
+	return Empty
 }
 
 func (service CommonService) QueryText(text string) []model.ResultVo {

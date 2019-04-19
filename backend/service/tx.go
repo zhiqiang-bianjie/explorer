@@ -24,7 +24,7 @@ func (service *TxService) QueryList(query bson.M, page, pageSize int) (pageInfo 
 	logger.Debug("QueryList start", service.GetTraceLog())
 	var data []document.CommonTx
 
-	if cnt, err := pageQuery(document.CollectionNmCommonTx, nil,
+	if cnt, err := service.PageQuery(nil,
 		query, desc(document.Tx_Field_Time), page, pageSize, &data); err == nil {
 		pageInfo.Data = buildData(data)
 		pageInfo.Count = cnt
@@ -38,7 +38,7 @@ func (service *TxService) QueryRecentTx() []model.RecentTx {
 	var selector = bson.M{"time": 1, "tx_hash": 1, "actual_fee": 1, "type": 1}
 	var txs []document.CommonTx
 
-	err := queryAll(document.CollectionNmCommonTx, selector, nil, desc(document.Tx_Field_Time), 10, &txs)
+	err := service.QueryAll(selector, nil, desc(document.Tx_Field_Time), 10, &txs)
 	if err != nil {
 		panic(err)
 	}
@@ -111,7 +111,7 @@ func (service *TxService) QueryByAcc(address string, page, size int) (result mod
 	query[document.Tx_Field_Type] = bson.M{
 		"$in": typeArr,
 	}
-	cnt, err := pageQuery(document.CollectionNmCommonTx, nil, query, desc(document.Tx_Field_Time), page, size, &data)
+	cnt, err := service.PageQuery(nil, query, desc(document.Tx_Field_Time), page, size, &data)
 	if err == nil {
 		result.Count = cnt
 		result.Data = data

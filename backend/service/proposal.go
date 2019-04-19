@@ -20,7 +20,7 @@ func (service *ProposalService) GetModule() Module {
 func (service *ProposalService) QueryList(page, size int) (resp model.PageVo) {
 	var data []document.Proposal
 	sort := desc(document.Proposal_Field_SubmitTime)
-	if cnt, err := pageQuery(document.CollectionNmProposal, nil, nil, sort, page, size, &data); err == nil {
+	if cnt, err := service.PageQuery(nil, nil, sort, page, size, &data); err == nil {
 		var proposals []model.Proposal
 		for _, propo := range data {
 			mP := model.Proposal{

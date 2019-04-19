@@ -20,7 +20,7 @@ func (service *BlockService) Query(height int64) model.BlockInfoVo {
 	var selector = bson.M{"height": 1, "time": 1, "num_txs": 1, "hash": 1, "validators.address": 1, "validators.voting_power": 1, "block.last_commit.precommits.validator_address": 1, "block.last_commit.block_id.hash": 1, "meta.header.total_txs": 1}
 	var result document.Block
 
-	var err = queryOne(document.CollectionNmBlock, selector, bson.M{document.Block_Field_Height: height}, &result)
+	var err = service.QueryOne(selector, bson.M{document.Block_Field_Height: height}, &result)
 	if err != nil {
 		panic(types.CodeNotFound)
 	}
@@ -36,7 +36,7 @@ func (service *BlockService) QueryList(page, size int) model.PageVo {
 	var blocks []document.Block
 
 	sort := desc(document.Block_Field_Height)
-	var cnt, err = pageQuery(document.CollectionNmBlock, selector, nil, sort, page, size, &blocks)
+	var cnt, err = service.PageQuery(selector, nil, sort, page, size, &blocks)
 	if err != nil {
 		panic(types.CodeNotFound)
 	}
@@ -54,7 +54,7 @@ func (service *BlockService) QueryRecent() []model.BlockInfoVo {
 	var selector = bson.M{"height": 1, "time": 1, "num_txs": 1, "hash": 1, "validators.address": 1, "validators.voting_power": 1, "block.last_commit.precommits.validator_address": 1, "meta.header.total_txs": 1}
 
 	sort := desc(document.Block_Field_Height)
-	err := queryAll(document.CollectionNmBlock, selector, nil, sort, 10, &blocks)
+	err := service.QueryAll(selector, nil, sort, 10, &blocks)
 	if err != nil {
 		panic(types.CodeNotFound)
 	}

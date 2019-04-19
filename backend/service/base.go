@@ -11,32 +11,56 @@ import (
 )
 
 var (
-	accountService = &AccountService{}
+	accountService = &AccountService{
+		BaseService{
+			collection:Account,
+		},
+	}
 
-	blockService = &BlockService{}
+	blockService = &BlockService{
+		BaseService{
+			collection:Block,
+		},
+	}
 
 	commonService = &CommonService{}
 
-	proposalService = &ProposalService{}
+	proposalService = &ProposalService{
+		BaseService{
+			collection:Proposal,
+		},
+	}
 
-	stakeService = &CandidateService{}
+	stakeService = &CandidateService{
+		BaseService{
+			collection:Candidate,
+		},
+	}
 
-	txService        = &TxService{}
-	delegatorService = &DelegatorService{}
+	txService        = &TxService{
+		BaseService{
+			collection:Tx,
+		},
+	}
+	delegatorService = &DelegatorService{
+		BaseService{
+			collection:Delegator,
+		},
+	}
 )
 
 const (
-	_ Module = iota
-	Account
-	Block
-	Common
-	Proposal
-	Candidate
-	Tx
-	Delegator
+	Empty Module = ""
+	Account  = document.CollectionNmAccount
+	Block    = document.CollectionNmBlock
+	Common   = "Common"
+	Proposal = document.CollectionNmProposal
+	Candidate = document.CollectionNmStakeRoleCandidate
+	Tx         = document.CollectionNmCommonTx
+	Delegator = document.CollectionNmStakeRoleDelegator
 )
 
-type Module int
+type Module string
 
 func Get(m Module) Service {
 	switch m {
@@ -64,6 +88,10 @@ type Service interface {
 
 type BaseService struct {
 	tid string
+	collection string
+}
+func (base *BaseService) Collection() string {
+	return base.collection
 }
 
 func (base *BaseService) SetTid(traceId string) {
@@ -90,10 +118,10 @@ func (base *BaseService) QueryBlackList(database *mgo.Database) map[string]docum
 	return blackListMap
 }
 
-func queryAll(collation string, selector, condition bson.M, sort string, size int, result interface{}) error {
+func (base *BaseService) QueryAll(selector, condition bson.M, sort string, size int, result interface{}) error {
 	var query = orm.NewQuery()
 	defer query.Release()
-	query.SetCollection(collation).
+	query.SetCollection(base.Collection()).
 		SetCondition(condition).
 		SetSelector(selector).
 		SetSort(sort).
@@ -107,10 +135,10 @@ func queryAll(collation string, selector, condition bson.M, sort string, size in
 	return err
 }
 
-func queryOne(collation string, selector, condition bson.M, result interface{}) error {
+func (base *BaseService) QueryOne(selector, condition bson.M, result interface{}) error {
 	var query = orm.NewQuery()
 	defer query.Release()
-	query.SetCollection(collation).
+	query.SetCollection(base.Collection()).
 		SetCondition(condition).
 		SetSelector(selector).
 		SetResult(result)
@@ -122,10 +150,10 @@ func queryOne(collation string, selector, condition bson.M, result interface{}) 
 	return err
 }
 
-func pageQuery(collation string, selector, condition bson.M, sort string, page, size int, result interface{}) (int, error) {
+func (base *BaseService) PageQuery(selector, condition bson.M, sort string, page, size int, result interface{}) (int, error) {
 	var query = orm.NewQuery()
 	defer query.Release()
-	query.SetCollection(collation).
+	query.SetCollection(base.Collection()).
 		SetCondition(condition).
 		SetSelector(selector).
 		SetSort(sort).
