@@ -66,7 +66,7 @@ func registerNavigationBar(r *mux.Router) error {
 			result.VoteValNum = voteValNum
 			result.ActiveValNum = len(validatorSet.Validators)
 
-			validator := service.Get(service.Candidate).(*service.CandidateService).QueryValidatorByConAddr(proposer)
+			validator := service.GetCandidateService().QueryValidatorByConAddr(proposer)
 			result.Moniker = validator.Description.Moniker
 			result.OperatorAddr = validator.Address
 		}

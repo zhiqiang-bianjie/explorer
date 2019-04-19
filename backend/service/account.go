@@ -12,10 +12,6 @@ type AccountService struct {
 	BaseService
 }
 
-func (service *AccountService) GetModule() Module {
-	return Account
-}
-
 func (service *AccountService) Query(address string) (result model.AccountVo) {
 	prefix, _, _ := utils.DecodeAndConvert(address)
 	if prefix == conf.Get().Hub.Prefix.ValAddr {

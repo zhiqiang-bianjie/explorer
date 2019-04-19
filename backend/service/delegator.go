@@ -15,14 +15,6 @@ type DelegatorService struct {
 	BaseService
 }
 
-func (service *DelegatorService) GetModule() Module {
-	return Delegator
-}
-
-func (service *DelegatorService) Collection() string {
-	return Delegator
-}
-
 func (service *DelegatorService) QueryDelegation(valAddr string) (info ValInfo) {
 	// query delegation info
 	var accAddr = utils.Convert(conf.Get().Hub.Prefix.AccAddr, valAddr)

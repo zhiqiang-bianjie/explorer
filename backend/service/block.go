@@ -12,10 +12,6 @@ type BlockService struct {
 	BaseService
 }
 
-func (service *BlockService) GetModule() Module {
-	return Block
-}
-
 func (service *BlockService) Query(height int64) model.BlockInfoVo {
 	var selector = bson.M{"height": 1, "time": 1, "num_txs": 1, "hash": 1, "validators.address": 1, "validators.voting_power": 1, "block.last_commit.precommits.validator_address": 1, "block.last_commit.block_id.hash": 1, "meta.header.total_txs": 1}
 	var result document.Block

@@ -21,10 +21,6 @@ type CandidateService struct {
 	BaseService
 }
 
-func (service *CandidateService) GetModule() Module {
-	return Candidate
-}
-
 func (service *CandidateService) GetValidators(typ, origin string, page, size int) interface{} {
 	if origin == "browser" {
 		var result []lcd.ValidatorVo

@@ -13,10 +13,6 @@ type ProposalService struct {
 	BaseService
 }
 
-func (service *ProposalService) GetModule() Module {
-	return Proposal
-}
-
 func (service *ProposalService) QueryList(page, size int) (resp model.PageVo) {
 	var data []document.Proposal
 	sort := desc(document.Proposal_Field_SubmitTime)

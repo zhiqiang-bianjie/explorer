@@ -24,20 +24,11 @@ func RegisterTextSearch(r *mux.Router) error {
 	return nil
 }
 
-type Common struct {
-	*service.CommonService
-}
-
-var common = Common{
-	service.Get(service.Common).(*service.CommonService),
-}
-
 func registerQueryText(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryText, "GET", func(request model.IrisReq) interface{} {
-		common.SetTid(request.TraceId)
 		text := Var(request, "text")
 
-		result := common.QueryText(text)
+		result := service.GetCommonService().QueryText(text)
 		return result
 	})
 
@@ -59,7 +50,7 @@ func registerQueryEnvConfig(r *mux.Router) error {
 			Configs interface{} `json:"configs"`
 		}{
 			CurEnv:  conf.Get().Server.CurEnv,
-			Configs: common.GetConfig(),
+			Configs: service.GetCommonService().GetConfig(),
 		}
 		return envConf
 	})

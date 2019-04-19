@@ -13,13 +13,13 @@ import (
 var (
 	accountService = &AccountService{
 		BaseService{
-			collection:Account,
+			collection: document.CollectionNmAccount,
 		},
 	}
 
 	blockService = &BlockService{
 		BaseService{
-			collection:Block,
+			collection: document.CollectionNmBlock,
 		},
 	}
 
@@ -27,69 +27,61 @@ var (
 
 	proposalService = &ProposalService{
 		BaseService{
-			collection:Proposal,
+			collection: document.CollectionNmProposal,
 		},
 	}
 
 	stakeService = &CandidateService{
 		BaseService{
-			collection:Candidate,
+			collection: document.CollectionNmStakeRoleCandidate,
 		},
 	}
 
-	txService        = &TxService{
+	txService = &TxService{
 		BaseService{
-			collection:Tx,
+			collection: document.CollectionNmCommonTx,
 		},
 	}
 	delegatorService = &DelegatorService{
 		BaseService{
-			collection:Delegator,
+			collection: document.CollectionNmStakeRoleDelegator,
 		},
 	}
 )
 
-const (
-	Empty Module = ""
-	Account  = document.CollectionNmAccount
-	Block    = document.CollectionNmBlock
-	Common   = "Common"
-	Proposal = document.CollectionNmProposal
-	Candidate = document.CollectionNmStakeRoleCandidate
-	Tx         = document.CollectionNmCommonTx
-	Delegator = document.CollectionNmStakeRoleDelegator
-)
-
-type Module string
-
-func Get(m Module) Service {
-	switch m {
-	case Account:
-		return accountService
-	case Block:
-		return blockService
-	case Common:
-		return commonService
-	case Proposal:
-		return proposalService
-	case Candidate:
-		return stakeService
-	case Tx:
-		return txService
-	case Delegator:
-		return delegatorService
-	}
-	return nil
+func GetAccountService() *AccountService {
+	return accountService
 }
 
-type Service interface {
-	GetModule() Module
+func GetBlockService() *BlockService {
+	return blockService
+}
+
+func GetCommonService() *CommonService {
+	return commonService
+}
+
+func GetProposalService() *ProposalService {
+	return proposalService
+}
+
+func GetCandidateService() *CandidateService {
+	return stakeService
+}
+
+func GetDelegatorService() *DelegatorService {
+	return delegatorService
+}
+
+func GetTxService() *TxService {
+	return txService
 }
 
 type BaseService struct {
-	tid string
+	tid        string
 	collection string
 }
+
 func (base *BaseService) Collection() string {
 	return base.collection
 }

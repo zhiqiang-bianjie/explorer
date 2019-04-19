@@ -15,10 +15,6 @@ type CommonService struct {
 	genesis lcd.GenesisVo
 }
 
-func (service *CommonService) GetModule() Module {
-	return Empty
-}
-
 func (service CommonService) QueryText(text string) []model.ResultVo {
 	var result []model.ResultVo
 	i, isUint := utils.ParseUint(text)

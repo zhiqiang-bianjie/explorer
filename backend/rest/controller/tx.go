@@ -27,17 +27,8 @@ func RegisterTx(r *mux.Router) error {
 	return nil
 }
 
-type Tx struct {
-	*service.TxService
-}
-
-var tx = Tx{
-	service.Get(service.Tx).(*service.TxService),
-}
-
 func registerQueryTxList(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryTxList, "GET", func(request model.IrisReq) interface{} {
-		tx.SetTid(request.TraceId)
 		query := bson.M{}
 
 		address := GetString(request, "address")
@@ -74,7 +65,7 @@ func registerQueryTxList(r *mux.Router) error {
 			}
 			break
 		}
-		result = tx.QueryList(query, page, size)
+		result = service.GetTxService().QueryList(query, page, size)
 		return result
 	})
 	return nil
@@ -82,10 +73,9 @@ func registerQueryTxList(r *mux.Router) error {
 
 func registerQueryTx(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryTx, "GET", func(request model.IrisReq) interface{} {
-		tx.SetTid(request.TraceId)
 		hash := Var(request, "hash")
 
-		result := tx.Query(hash)
+		result := service.GetTxService().Query(hash)
 		return result
 	})
 
@@ -94,7 +84,6 @@ func registerQueryTx(r *mux.Router) error {
 
 func registerQueryTxsCounter(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryTxsCounter, "GET", func(request model.IrisReq) interface{} {
-		tx.SetTid(request.TraceId)
 		query := bson.M{}
 		request.ParseForm()
 
@@ -108,7 +97,7 @@ func registerQueryTxsCounter(r *mux.Router) error {
 			query["height"] = height
 		}
 
-		result := tx.CountByType(query)
+		result := service.GetTxService().CountByType(query)
 		return result
 	})
 
@@ -117,10 +106,9 @@ func registerQueryTxsCounter(r *mux.Router) error {
 
 func registerQueryTxsByAccount(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryTxsByAccount, "GET", func(request model.IrisReq) interface{} {
-		tx.SetTid(request.TraceId)
 		address := Var(request, "address")
 		page, size := GetPage(request)
-		result := tx.QueryByAcc(address, page, size)
+		result := service.GetTxService().QueryByAcc(address, page, size)
 
 		return result
 	})
@@ -130,8 +118,7 @@ func registerQueryTxsByAccount(r *mux.Router) error {
 
 func registerQueryTxsByDay(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryTxsByDay, "GET", func(request model.IrisReq) interface{} {
-		tx.SetTid(request.TraceId)
-		result := tx.QueryTxNumGroupByDay()
+		result := service.GetTxService().QueryTxNumGroupByDay()
 		return result
 	})
 	return nil
@@ -139,8 +126,7 @@ func registerQueryTxsByDay(r *mux.Router) error {
 
 func registerQueryRecentTx(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryRecentTx, "GET", func(request model.IrisReq) interface{} {
-		tx.SetTid(request.TraceId)
-		result := tx.QueryRecentTx()
+		result := service.GetTxService().QueryRecentTx()
 		return result
 	})
 	return nil

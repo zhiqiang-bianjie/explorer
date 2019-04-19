@@ -25,14 +25,6 @@ func RegisterBlock(r *mux.Router) error {
 	return nil
 }
 
-type Block struct {
-	*service.BlockService
-}
-
-var block = Block{
-	service.Get(service.Block).(*service.BlockService),
-}
-
 func registerQueryBlock(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryBlock, "GET", func(request model.IrisReq) interface{} {
 		h := Var(request, "height")
@@ -41,8 +33,7 @@ func registerQueryBlock(r *mux.Router) error {
 			panic(types.CodeInValidParam)
 			return nil
 		}
-		block.SetTid(request.TraceId)
-		result := block.Query(height)
+		result := service.GetBlockService().Query(height)
 		return result
 	})
 	return nil
@@ -50,10 +41,9 @@ func registerQueryBlock(r *mux.Router) error {
 
 func registerQueryBlocks(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryBlocks, "GET", func(request model.IrisReq) interface{} {
-		block.SetTid(request.TraceId)
 		page := int(utils.ParseIntWithDefault(QueryParam(request, "page"), 1))
 		size := int(utils.ParseIntWithDefault(QueryParam(request, "size"), 100))
-		result := block.QueryList(page, size)
+		result := service.GetBlockService().QueryList(page, size)
 		return result
 	})
 
@@ -62,7 +52,7 @@ func registerQueryBlocks(r *mux.Router) error {
 
 func registerQueryRecentBlocks(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryRecentBlocks, "GET", func(request model.IrisReq) interface{} {
-		return block.QueryRecent()
+		return service.GetBlockService().QueryRecent()
 	})
 
 	return nil
@@ -70,12 +60,11 @@ func registerQueryRecentBlocks(r *mux.Router) error {
 
 func registerQueryBlocksPrecommits(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryBlocksPrecommits, "GET", func(request model.IrisReq) interface{} {
-		block.SetTid(request.TraceId)
 
 		address := Var(request, "address")
 		page, size := GetPage(request)
 
-		result := block.QueryPrecommits(address, page, size)
+		result := service.GetBlockService().QueryPrecommits(address, page, size)
 		return result
 	})
 

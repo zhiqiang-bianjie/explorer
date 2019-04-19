@@ -22,20 +22,11 @@ func RegisterAccount(r *mux.Router) error {
 	return nil
 }
 
-type AccountController struct {
-	*service.AccountService
-}
-
-var account = AccountController{
-	service.Get(service.Account).(*service.AccountService),
-}
-
 func registerQueryAccount(r *mux.Router) error {
 
 	doApi(r, types.UrlRegisterQueryAccount, "GET", func(request model.IrisReq) interface{} {
 		address := Var(request, "address")
-		account.SetTid(request.TraceId)
-		result := account.Query(address)
+		result := service.GetAccountService().Query(address)
 		return result
 	})
 
@@ -45,8 +36,7 @@ func registerQueryAccount(r *mux.Router) error {
 func registerQueryAllAccount(r *mux.Router) error {
 	doApi(r, types.UrlRegisterQueryAllAccount, "GET", func(request model.IrisReq) interface{} {
 		page, size := GetPage(request)
-		account.SetTid(request.TraceId)
-		result := account.QueryAll(page, size)
+		result := service.GetAccountService().QueryAll(page, size)
 		return result
 	})
 	return nil

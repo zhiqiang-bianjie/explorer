@@ -16,10 +16,6 @@ type TxService struct {
 	BaseService
 }
 
-func (service *TxService) GetModule() Module {
-	return Tx
-}
-
 func (service *TxService) QueryList(query bson.M, page, pageSize int) (pageInfo model.PageVo) {
 	logger.Debug("QueryList start", service.GetTraceLog())
 	var data []document.CommonTx
